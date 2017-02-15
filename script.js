@@ -61,7 +61,7 @@ window.onload = function () {
         methods: {
             initSocket: function () {
                 this.notify('Socket', 'client side connecting...');
-                this.socket = io('https://localhost:1604');
+                this.socket = io('https://localhost:1404');
                 this.socket.on('metadata', this.onMetadata);
                 this.socket.on('music was', this.onMusicWas);
                 this.socket.on('options', this.onOptions);
