@@ -47,7 +47,7 @@ window.onload = function () {
             },
             toasts: [],
             options: {
-                endpoint: 'https://localhost:1404/',
+                endpoint: 'https://localhost:1404',
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
