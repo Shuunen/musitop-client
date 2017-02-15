@@ -1,0 +1,11 @@
+{
+    "short_name": "Musitop",
+    "name": "Musitop - Sort your music",
+    "icons": [{
+        "src": "icons/Paomedia/headphone_144.png",
+        "sizes": "144x144",
+        "type": "image/png"
+    }],
+    "start_url": "index.html",
+    "display": "standalone"
+}
