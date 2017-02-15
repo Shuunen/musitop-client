@@ -47,6 +47,7 @@ window.onload = function () {
             },
             toasts: [],
             options: {
+                endpoint: 'https://localhost:1404/',
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
@@ -61,7 +62,7 @@ window.onload = function () {
         methods: {
             initSocket: function () {
                 this.notify('Socket', 'client side connecting...');
-                this.socket = io('https://localhost:1404');
+                this.socket = io(this.endpoint);
                 this.socket.on('metadata', this.onMetadata);
                 this.socket.on('music was', this.onMusicWas);
                 this.socket.on('options', this.onOptions);
@@ -82,7 +83,7 @@ window.onload = function () {
                 this.song.title = metadata.title;
                 this.song.duration = Math.round(metadata.duration);
                 this.song.startTimestamp = metadata.startTimestamp;
-                this.song.stream = metadata.stream + '?t=' + metadata.startTimestamp;
+                this.song.stream = this.endpoint + metadata.stream + '?t=' + metadata.startTimestamp;
                 this.updateCover(metadata.picture[0]); // specific process for covers
                 this.resetProgressBar();
                 this.updatePlayer();
