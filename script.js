@@ -225,7 +225,7 @@ window.onload = function () {
                     return;
                 }
                 this.player = document.querySelector('audio');
-                this.player.autoplay = true;
+                // this.player.autoplay = true;
                 this.player.addEventListener('ended', this.nextSong);
                 this.player.addEventListener('pause', this.updateStatus);
                 this.player.addEventListener('play', this.updateStatus);
