@@ -41,7 +41,6 @@ window.onload = function () {
                 duration: 0,
                 shouldStartAt: 0,
                 startTimestamp: 0,
-                endNotified: false,
                 hasBeenMarked: false
             },
             dynamicStyles: '',
@@ -88,7 +87,6 @@ window.onload = function () {
                 this.song.duration = Math.round(metadata.duration);
                 this.song.startTimestamp = metadata.startTimestamp;
                 this.song.endTimestamp = metadata.startTimestamp + this.song.duration;
-                this.song.endNotified = false;
                 this.song.hasBeenMarked = false;
                 this.song.stream = this.options.endpoint + metadata.stream + '?t=' + metadata.startTimestamp;
                 this.updateCover(metadata.picture[0]); // specific process for covers
@@ -342,12 +340,11 @@ window.onload = function () {
             },
             cron: function () {
                 // console.log('in cron');
-                if (!this.song.endNotified && this.isPlaying && !this.song.hasBeenMarked) {
+                if (this.isPlaying && !this.song.hasBeenMarked) {
                     var songEndIn = (this.song.endTimestamp - this.getTimestamp());
                     // console.log('song end in ', songEndIn, 'seconds');
-                    if (songEndIn <= 20) {
+                    if ([34, 21, 13, 8, 5].indexOf(songEndIn) !== -1) {
                         this.notify('Hey', 'Song end in ' + songEndIn + ' seconds', 'info', true);
-                        this.song.endNotified = true;
                     }
                 }
             }
