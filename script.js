@@ -165,6 +165,9 @@ window.onload = function () {
                         return;
                     }
                     Grade(target);
+                    // flatten Grade applied style
+                    target[0].setAttribute('style', target[0].getAttribute('style').replace(/\n|\s+/g, ''));
+                    // get the colors
                     var colors = target[0].style.backgroundImage.match(/(rgb\([\d]+,\s[\d]+,\s[\d]+\))/g); // to use [0] ?
                     if (!colors || colors.length !== 2) {
                         this.notify('warning', 'no colors retrieved from Grade');
