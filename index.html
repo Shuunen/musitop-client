@@ -78,11 +78,18 @@
             z-index: 30;
             overflow: hidden;
             border-radius: 20px;
+        }
+
+        .cover-wrap img {
             filter: grayscale(0) blur(0);
             will-change: filter;
         }
 
-        .cover-wrap.blur {
+        .desktop .cover-wrap img {
+            transition: filter 0.3s;
+        }
+
+        .cover-wrap.blur img {
             filter: grayscale(1) blur(10px);
         }
 
