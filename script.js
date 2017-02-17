@@ -27,7 +27,9 @@ window.onload = function () {
             isLoading: true,
             isPaused: true,
             isPlaying: false,
-            notifier: null,
+            sounds: {
+                notification: new Audio('sounds/notification.mp3')
+            },
             progressBarStyle: {
                 transitionDuration: '0s',
                 transform: 'translateX(-100%)'
@@ -38,7 +40,9 @@ window.onload = function () {
                 title: 'Unknown title',
                 duration: 0,
                 shouldStartAt: 0,
-                startTimestamp: 0
+                startTimestamp: 0,
+                endNotified: false,
+                hasBeenMarked: false
             },
             dynamicStyles: '',
             colors: {
@@ -83,6 +87,9 @@ window.onload = function () {
                 this.song.title = metadata.title;
                 this.song.duration = Math.round(metadata.duration);
                 this.song.startTimestamp = metadata.startTimestamp;
+                this.song.endTimestamp = metadata.startTimestamp + this.song.duration;
+                this.song.endNotified = false;
+                this.song.hasBeenMarked = false;
                 this.song.stream = this.options.endpoint + metadata.stream + '?t=' + metadata.startTimestamp;
                 this.updateCover(metadata.picture[0]); // specific process for covers
                 this.resetProgressBar();
@@ -92,8 +99,10 @@ window.onload = function () {
                 this.notify('Client', 'Server said that music was "' + musicWas + '"');
                 if (musicWas === 'good') {
                     this.notify('Will keep', this.song.artist + ' - ' + this.song.title, 'success');
+                    this.song.hasBeenMarked = true;
                 } else if (musicWas === 'bad') {
                     this.notify('Deleting', this.song.artist + ' - ' + this.song.title, 'alert');
+                    this.song.hasBeenMarked = true;
                 } else if (musicWas === 'next') {
                     this.notify('Skip', 'Loading next song...', 'info');
                     setTimeout(() => {
@@ -286,7 +295,7 @@ window.onload = function () {
                     this.notify('Error', 'non handled case in pauseResume', 'error');
                 }
             },
-            notify: function (action, message, type) {
+            notify: function (action, message, type, withSound) {
                 /* eslint-disable no-console */
                 if (type) {
                     if (['success', 'info', 'alert'].indexOf(type) !== -1) {
@@ -295,6 +304,9 @@ window.onload = function () {
                         this.toast('alert', 'Error', 'cannot toast type "' + type + '"');
                         console.error('cannot toast type "' + type + '"');
                     }
+                }
+                if (withSound) {
+                    this.sounds.notification.play();
                 }
                 if (console[action]) {
                     console[action](message);
@@ -327,6 +339,17 @@ window.onload = function () {
                         console.error(err); // eslint-disable-line no-console
                     });
                 }
+            },
+            cron: function () {
+                // console.log('in cron');
+                if (!this.song.endNotified && this.isPlaying && !this.song.hasBeenMarked) {
+                    var songEndIn = (this.song.endTimestamp - this.getTimestamp());
+                    // console.log('song end in ', songEndIn, 'seconds');
+                    if (songEndIn <= 20) {
+                        this.notify('Hey', 'Song end in ' + songEndIn + ' seconds', 'info', true);
+                        this.song.endNotified = true;
+                    }
+                }
             }
         },
         mounted() {
@@ -335,6 +358,7 @@ window.onload = function () {
             this.initPlayer();
             this.initKeyboard();
             this.initServiceWorker();
+            setInterval(this.cron, 1000);
         }
     });
 };
