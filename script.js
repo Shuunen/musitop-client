@@ -23,6 +23,7 @@ window.onload = function () {
                 name: 'Musitop',
                 socket: null
             },
+            isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
             isLoading: true,
             isPaused: true,
@@ -50,7 +51,7 @@ window.onload = function () {
             },
             toasts: [],
             options: {
-                endpoint: 'https://localhost:1404',
+                endpoint: 'https://localhosta:1404',
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
@@ -59,7 +60,12 @@ window.onload = function () {
                     next: ['MediaTrackNext', 'ArrowRight'],
                     pause: [' ', 'MediaPlayPause']
                 },
-                canUpdate: true
+                modal: {
+                    isOpened: false
+                },
+                canUpdate: true,
+                doSoundNotifications: true,
+                doToastNotifications: true
             }
         },
         methods: {
@@ -121,6 +127,7 @@ window.onload = function () {
             },
             onConnection: function () {
                 this.notify('Socket', 'client side connection init');
+                this.isConnected = true;
             },
             onOptions: function (options) {
                 if (!this.options.canUpdate) {
@@ -130,6 +137,9 @@ window.onload = function () {
                 this.notify('info', options);
                 this.options.audioClientSide = options.audioClientSide;
                 this.options.audioServerSide = !options.audioClientSide;
+                if (this.options.audioClientSide && !this.player) {
+                    this.initPlayer();
+                }
             },
             updatePlayer: function () {
                 var shouldStartAt = Math.round(new Date().getTime() / 1000) - this.song.startTimestamp;
@@ -295,7 +305,7 @@ window.onload = function () {
             },
             notify: function (action, message, type, withSound) {
                 /* eslint-disable no-console */
-                if (type) {
+                if (type && this.options.doToastNotifications) {
                     if (['success', 'info', 'alert'].indexOf(type) !== -1) {
                         this.toast(type, action, message);
                     } else {
@@ -303,7 +313,7 @@ window.onload = function () {
                         console.error('cannot toast type "' + type + '"');
                     }
                 }
-                if (withSound) {
+                if (withSound && this.options.doSoundNotifications) {
                     this.sounds.notification.play();
                 }
                 if (console[action]) {
@@ -352,7 +362,6 @@ window.onload = function () {
         mounted() {
             this.notify('info', this.app.name + ' init');
             this.initSocket();
-            this.initPlayer();
             this.initKeyboard();
             this.initServiceWorker();
             setInterval(this.cron, 1000);

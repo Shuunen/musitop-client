@@ -31,13 +31,17 @@
             box-shadow: inset 2px 2px 40px #333;
         }
 
-        .gradient-overlay {
+        .absolute-full {
             position: absolute;
-            z-index: 20;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            pointer-events: none;
+        }
+
+        .gradient-overlay {
+            z-index: 20;
             opacity: 0.5;
         }
 
@@ -62,6 +66,13 @@
             align-items: flex-start;
             box-shadow: 0px 0px 20px 1px #333, 0px 12px 1px #333;
             z-index: 20;
+            opacity: 0;
+            transition: opacity .3s;
+            will-change: opacity;
+        }
+
+        .player.visible {
+            opacity: 1;
         }
 
         .desktop .player {
@@ -70,11 +81,6 @@
         }
 
         .cover-wrap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             z-index: 30;
             overflow: hidden;
             border-radius: 20px;
@@ -115,11 +121,6 @@
         .inside-shadow {
             box-shadow: inset 0 0 20vw #333;
             z-index: 20;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             pointer-events: none;
         }
 
@@ -145,24 +146,24 @@
             text-align: left;
         }
 
-        .player .top,
-        .player .bottom {
+        .top,
+        .bottom {
             position: absolute;
         }
 
-        .player .top {
+        .top {
             top: 20px;
         }
 
-        .player .right {
+        .right {
             right: 20px;
         }
 
-        .player .bottom {
+        .bottom {
             bottom: 20px;
         }
 
-        .player .left {
+        .left {
             left: 20px;
         }
 
@@ -185,27 +186,15 @@
         }
 
         .player-inner-gradient {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            bottom: 0;
-            left: 0;
             z-index: 30;
             border-radius: 20px;
             box-shadow: inset 0px 10px 120px 0 #222, inset 0px -40px 150px 10px #222;
-            pointer-events: none;
         }
 
         .player-border {
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
             box-shadow: inset 1px 3px 8px white;
             z-index: 40;
             border-radius: 20px;
-            pointer-events: none;
         }
 
         .progress-bar-wrapper {
@@ -394,18 +383,106 @@
             color: black;
             text-align: left;
         }
+
+        .options-modal-toggle {
+            z-index: 40;
+            height: 40px;
+            width: 40px;
+            transition: transform 1s;
+            will-change: transform;
+        }
+
+        .options-modal-toggle.opened {
+            transform: rotate(360deg);
+        }
+
+        .options-modal-toggle.centered {
+            height: 100px;
+            width: 100px;
+            top: calc(50% - 50px);
+            right: calc(50% - 50px);
+        }
+
+        .options-modal-toggle.opened.centered {
+            top: 20px;
+            right: 20px;
+            height: 40px;
+            width: 40px;
+        }
+
+        .options-modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 30;
+            opacity: 0;
+            transition: opacity .5s;
+            will-change: opacity;
+        }
+
+        .options-modal.opened {
+            opacity: 1;
+            pointer-events: inherit;
+        }
+
+        .option-line {
+            display: flex;
+            margin-bottom: 20px;
+            width: 350px;
+            justify-content: space-between;
+            cursor: pointer;
+            transform: skewX(0);
+            opacity: 1;
+            transition: opacity .2s, transform .3s;
+            will-change: opacity, transform;
+        }
+
+        .option-line.disabled {
+            transform: skewX(-20deg);
+            opacity: 0.5;
+        }
+
+        input[type="text"] {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
     </style>
 </head>
 
 <body>
     <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'">
-        <div class="gradient-overlay">
+        <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
+            v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
+            <use xlink:href="icons/icons.svg#settings"></use>
+        </svg>
+        <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
+            <label class="option-line">
+                Server location <input type="text" v-model.lazy="options.endpoint" v-on:change="initSocket">
+            </label>
+            <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
+                Sound notifications <input type="checkbox" v-model="options.doSoundNotifications">
+            </label>
+            <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
+                Toast notifications <input type="checkbox" v-model="options.doToastNotifications">
+            </label>
+        </div>
+        <div class="gradient-overlay absolute-full">
             <img v-bind:src="song.cover" alt="song cover for background">
         </div>
-        <img class="loader cover-blur" v-bind:src="song.cover" alt="song cover" />
-        <div class="player">
-            <div class="cover-wrap" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
-                <img class="loader cover" v-bind:src="song.cover" alt="song cover" />
+        <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" />
+        <div class="player" v-bind:class="{ visible: isConnected }">
+            <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
+                <img class="cover" v-bind:src="song.cover" alt="song cover" />
             </div>
             <div class="player-top">
                 <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
@@ -433,8 +510,8 @@
                     <use xlink:href="icons/icons.svg#unlike-2"></use>
                 </svg>
             </div>
-            <div class="player-inner-gradient"></div>
-            <div class="player-border"></div>
+            <div class="player-inner-gradient absolute-full"></div>
+            <div class="player-border absolute-full"></div>
             <div class="progress-bar-wrapper">
                 <div class="progress-bar color-primary">
                     <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
@@ -444,7 +521,7 @@
         <audio controls>
             <source type="audio/mpeg"> Your browser does not support the audio element.
         </audio>
-        <div class="inside-shadow"></div>
+        <div class="inside-shadow absolute-full"></div>
         <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
             <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
             <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
