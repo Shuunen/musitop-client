@@ -292,13 +292,13 @@ window.onload = function () {
             pauseResume: function () {
                 if (this.options.audioClientSide) {
                     if (this.player.paused) {
+                        this.options.doAutoplay = true;
                         this.updatePlayer();
                         this.player.play();
-                        this.player.autoplay = true;
                         this.notify('info', 'song  was paused, resuming...');
                     } else {
                         this.player.pause();
-                        this.player.autoplay = false;
+                        this.options.doAutoplay = false;
                         this.notify('info', 'song  was playing, do pause');
                     }
                 } else if (this.options.audioServerSide) {
