@@ -57,7 +57,7 @@ window.onload = function () {
                 }
             },
             options: {
-                endpoint: 'https://musitop.io:1404',
+                endpoint: 'https://musitop.io:1444',
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
@@ -359,6 +359,12 @@ window.onload = function () {
                 this.toaster.lastOne.message = (type + title + message);
             },
             initServiceWorker: function () {
+
+                if (document.location.protocol.indexOf('https') === -1) {
+                    // avoid error when trying to init a service worker on non https connection
+                    return;
+                }
+
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('service-worker.js').then((registration) => {
                         // Registration was successful
