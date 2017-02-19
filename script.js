@@ -42,6 +42,7 @@ window.onload = function () {
                 title: '',
                 duration: 0,
                 hasBeenMarked: false,
+                waitingForNext: true,
                 canPlay: false
             },
             dynamicStyles: '',
@@ -104,6 +105,7 @@ window.onload = function () {
                 this.song.duration = Math.round(metadata.duration);
                 this.song.canPlay = false;
                 this.song.hasBeenMarked = false;
+                this.song.waitingForNext = false;
                 this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
                 this.updateCover(metadata.picture[0]); // specific process for covers
                 this.resetProgressBar();
@@ -119,6 +121,7 @@ window.onload = function () {
                     this.song.hasBeenMarked = true;
                 } else if (musicWas === 'next') {
                     this.notify('Skip', 'Loading next song...', 'info');
+                    this.song.waitingForNext = true;
                     setTimeout(() => {
                         this.isLoading = true;
                     }, 100);
@@ -156,7 +159,9 @@ window.onload = function () {
             setPlayerSource: function () {
                 if (this.options.audioClientSide) {
                     if (this.player.src != this.song.stream) {
+                        // console.debug('currentTime = 0');
                         this.player.currentTime = 0;
+                        // console.debug('set player.src');
                         this.player.src = this.song.stream;
                     }
                 } else {
@@ -212,11 +217,11 @@ window.onload = function () {
             updateStatus: function (event) {
                 if (this.options.audioClientSide) {
                     // this.notify('Client', e.type, 'info');
-                    if (event.type === 'canplay') {
+                    if (event.type === 'canplay' && !this.song.waitingForNext) {
                         this.isLoading = false;
                         this.song.canPlay = true;
-                        this.setProgressBar('updateStatus : canplay');
                         if (this.options.doAutoplay) {
+                            // console.debug('player.play (canplay)');
                             this.player.play();
                         }
                     } else if (!this.isLoading) {
@@ -225,10 +230,8 @@ window.onload = function () {
                     }
                 } else if (this.options.audioServerSide) {
                     this.isLoading = false;
-                    this.setProgressBar('updateStatus : audioServerSide');
-                } else {
-                    this.notify('Error', 'non handled case in updateStatus', 'error');
                 }
+                this.setProgressBar('updateStatus');
             },
             resetProgressBar: function () {
                 this.progressBarStyle.transitionDuration = '0s';
@@ -255,6 +258,7 @@ window.onload = function () {
                 // console.log('selection / total : ' + selection + '/' + total + ' = ' + Math.round(selection / total * 100));
                 var percent = selection / total;
                 var start = Math.round(percent * this.song.duration);
+                // console.debug('currentTime = ' + start);
                 this.player.currentTime = start;
                 this.setProgressBar('musicJumpTo');
             },
@@ -302,9 +306,12 @@ window.onload = function () {
             },
             nextSong: function (event) {
                 this.isLoading = true;
+                this.song.waitingForNext = true;
                 this.resetProgressBar();
                 if (this.player) {
+                    // console.debug('pause (nextSong)');
                     this.player.pause();
+                    // console.debug('currentTime = 0 (nextSong)');
                     this.player.currentTime = 0;
                 }
                 this.socket.emit('music is', 'next');
@@ -314,10 +321,11 @@ window.onload = function () {
                 if (this.options.audioClientSide) {
                     if (this.player.paused) {
                         this.options.doAutoplay = true;
+                        // console.debug('player.play (pauseResume)');
                         this.player.play();
-                        // this.isPlaying = true;
                         this.notify('info', 'song  was paused, resuming...');
                     } else {
+                        // console.debug('player.pause (pauseResume)');
                         this.player.pause();
                         this.options.doAutoplay = false;
                         this.notify('info', 'song  was playing, do pause');

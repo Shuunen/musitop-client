@@ -550,7 +550,7 @@
             </div>
             <div class="player-inner-gradient absolute-full"></div>
             <div class="player-border absolute-full"></div>
-            <div class="progress-bar-wrapper">
+            <div class="progress-bar-wrapper" v-show="isPlaying">
                 <div class="progress-bar color-primary" v-on:click="musicJumpTo">
                     <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
                 </div>
