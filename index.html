@@ -216,6 +216,7 @@
             border-radius: 5px;
             box-shadow: 0 0 15px 0px;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .progress-bar-inner {
@@ -373,15 +374,26 @@
         }
 
         pre {
-            display: none;
             position: absolute;
-            top: 0;
+            font-size: 15px;
+            bottom: -20px;
             left: 0;
-            width: 100%;
             z-index: 100;
             background: white;
-            color: black;
+            color: grey;
             text-align: left;
+            padding: 10px;
+            margin: 0;
+            line-height: 18px;
+            opacity: 0;
+        }
+
+        pre.visible {
+            opacity: 1;
+        }
+
+        pre strong {
+            color: green;
         }
 
         .options-modal-toggle {
@@ -495,6 +507,12 @@
             <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
                 <span>Autoplay music</span><input type="checkbox" v-model="options.doAutoplay">
             </label>
+            <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
+                <span>Debug panel</span><input type="checkbox" v-model="options.debugActive">
+            </label>
+            <label class="option-line" v-on:click="document.location.href = document.location.href">
+                <span>Reload client</span>
+            </label>
         </div>
         <div class="gradient-overlay absolute-full">
             <img v-bind:src="song.cover" alt="song cover for background">
@@ -533,7 +551,7 @@
             <div class="player-inner-gradient absolute-full"></div>
             <div class="player-border absolute-full"></div>
             <div class="progress-bar-wrapper">
-                <div class="progress-bar color-primary">
+                <div class="progress-bar color-primary" v-on:click="musicJumpTo">
                     <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
                 </div>
             </div>
@@ -555,6 +573,18 @@
         </div>
         <!-- dynamic styles -->
         <div v-html="dynamicStyles"></div>
+        <!-- debug vars -->
+        <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
+web id : {{ getWebId() }}
+isConnected ? <span v-html="isConnected ? '<strong>YES</strong>':'no'"></span>
+doAutoplay ? <span v-html="options.doAutoplay ? '<strong>YES</strong>':'no'"></span>
+isLoading ?  <span v-html="isLoading ? '<strong>YES</strong>':'no'"></span>
+isPlaying ? <span v-html="isPlaying ? '<strong>YES</strong>':'no'"></span>
+isPaused ? <span v-html="isPaused ? '<strong>YES</strong>':'no'"></span>
+song canPlay ? <span v-html="song.canPlay ? '<strong>YES</strong>':'no'"></span>
+song duration : <span v-html="song.duration"></span> seconds
+secondsLeft : <span v-html="secondsLeft"></span> seconds
+        </pre>
     </div>
     <!-- scripts -->
     <script src="vendors/socket-io-slim_171.js"></script>

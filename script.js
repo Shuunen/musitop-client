@@ -20,8 +20,7 @@ window.onload = function () {
         el: '#app',
         data: {
             app: {
-                name: 'Musitop',
-                socket: null
+                name: 'Musitop'
             },
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
@@ -36,13 +35,14 @@ window.onload = function () {
                 transform: 'translateX(-100%)'
             },
             player: null,
+            socket: null,
             song: {
-                artist: 'Unknown artist',
-                title: 'Unknown title',
+                uid: 666,
+                artist: '',
+                title: '',
                 duration: 0,
-                shouldStartAt: 0,
-                startTimestamp: 0,
-                hasBeenMarked: false
+                hasBeenMarked: false,
+                canPlay: false
             },
             dynamicStyles: '',
             colors: {
@@ -75,7 +75,8 @@ window.onload = function () {
                 canUpdate: true,
                 doSoundNotifications: true,
                 doToastNotifications: true,
-                doAutoplay: false
+                doAutoplay: false,
+                debugActive: false
             }
         },
         methods: {
@@ -91,23 +92,22 @@ window.onload = function () {
                 this.socket.on('pause', this.pauseResume);
             },
             onMetadata: function (metadata) {
-                // avoid bothering this client with other clients data refresh
-                if (metadata.startTimestamp === this.song.startTimestamp) {
-                    this.notify('Socket', 'received same metadata infos');
+                // avoid bothering this client with other clients getting metadata
+                if (metadata.uid === this.song.uid) {
                     return;
                 }
                 this.notify('Socket', 'received fresh metadata infos');
                 this.notify('info', metadata);
+                this.song.uid = metadata.uid;
                 this.song.artist = metadata.albumartist[0];
                 this.song.title = metadata.title;
                 this.song.duration = Math.round(metadata.duration);
-                this.song.startTimestamp = metadata.startTimestamp;
-                this.song.endTimestamp = metadata.startTimestamp + this.song.duration;
+                this.song.canPlay = false;
                 this.song.hasBeenMarked = false;
-                this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.startTimestamp;
+                this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
                 this.updateCover(metadata.picture[0]); // specific process for covers
                 this.resetProgressBar();
-                this.updatePlayer();
+                this.setPlayerSource();
             },
             onMusicWas: function (musicWas) {
                 this.notify('Client', 'Server said that music was "' + musicWas + '"');
@@ -150,21 +150,18 @@ window.onload = function () {
                 if (this.options.audioClientSide && !this.player) {
                     this.initPlayer();
                 }
+                // to get options only once
+                this.options.canUpdate = false;
             },
-            updatePlayer: function () {
-                var shouldStartAt = Math.round(new Date().getTime() / 1000) - this.song.startTimestamp;
-                shouldStartAt = shouldStartAt <= 5 ? 0 : shouldStartAt; // if should start song at 1 or 3 seconds, it's stupid
-                this.song.shouldStartAt = shouldStartAt;
-                // this.notify('info', 'song shouldStartAt : ' + shouldStartAt + ' seconds');
+            setPlayerSource: function () {
                 if (this.options.audioClientSide) {
-                    this.player.autoplay = this.options.doAutoplay;
                     if (this.player.src != this.song.stream) {
+                        this.player.currentTime = 0;
                         this.player.src = this.song.stream;
                     }
-                    this.player.currentTime = this.song.shouldStartAt;
                 } else {
                     this.isLoading = false;
-                    this.updateProgressBar();
+                    this.setProgressBar();
                 }
             },
             getDataUrlFromArrayBuffer: function (arrayBuffer) {
@@ -185,7 +182,7 @@ window.onload = function () {
                 this.dynamicStyles = '';
                 var img = document.querySelector('.gradient-overlay img');
                 img.onload = () => {
-                    this.notify('info', 'cover image loaded');
+                    // this.notify('info', 'cover image loaded');
                     var target = document.querySelectorAll('.gradient-overlay'); // why querySelectorAll
                     target[0].style = '';
                     if (!target.length) {
@@ -201,7 +198,7 @@ window.onload = function () {
                         this.notify('warning', 'no colors retrieved from Grade');
                         return;
                     }
-                    this.notify('Grade', 'got colors from cover : "' + colors[0] + '" & "' + colors[1] + '"');
+                    // this.notify('Grade', 'got colors from cover : "' + colors[0] + '" & "' + colors[1] + '"');
                     this.colors.primary = colors[0];
                     this.colors.secondary = colors[1];
                     this.dynamicStyles = '<style>';
@@ -212,19 +209,23 @@ window.onload = function () {
                     this.dynamicStyles += '</style>';
                 };
             },
-            updateStatus: function (e) {
+            updateStatus: function (event) {
                 if (this.options.audioClientSide) {
                     // this.notify('Client', e.type, 'info');
-                    if (e.type === 'canplay') {
+                    if (event.type === 'canplay') {
                         this.isLoading = false;
-                        this.updateProgressBar();
+                        this.song.canPlay = true;
+                        this.setProgressBar('updateStatus : canplay');
+                        if (this.options.doAutoplay) {
+                            this.player.play();
+                        }
                     } else if (!this.isLoading) {
                         this.isPaused = this.player.paused;
                         this.isPlaying = !this.player.paused;
                     }
                 } else if (this.options.audioServerSide) {
                     this.isLoading = false;
-                    this.updateProgressBar();
+                    this.setProgressBar('updateStatus : audioServerSide');
                 } else {
                     this.notify('Error', 'non handled case in updateStatus', 'error');
                 }
@@ -233,30 +234,39 @@ window.onload = function () {
                 this.progressBarStyle.transitionDuration = '0s';
                 this.progressBarStyle.transform = 'translateX(-100%)';
             },
-            updateProgressBar: function () {
-                // this.notify('shouldStartAt', this.song.shouldStartAt);
-                var percentDoneAtInit = Math.round(this.song.shouldStartAt / this.song.duration * 10000) / 100;
-                // this.notify('percentDoneAtInit', percentDoneAtInit);
-                var secondsLeft = Math.round(this.song.duration - this.song.shouldStartAt);
-                // this.notify('secondsLeft', secondsLeft);
+            setProgressBar: function (from) {
+                // this.notify('Info', 'in setProgressBar from "' + from + '"');
+                var secondsLeft = this.getSecondsLeft();
+                var percentPlayed = Math.round((this.song.duration - secondsLeft) / this.song.duration * 10000) / 100;
+                percentPlayed -= 2; // because
                 this.progressBarStyle.transitionDuration = '0s';
+                this.progressBarStyle.transform = 'translateX(-' + (100 - percentPlayed) + '%)';
+                // this.notify('Info', 'percentPlayed : ' + percentPlayed + '%');
                 setTimeout(() => {
                     this.progressBarStyle.transitionDuration = secondsLeft + 's';
                 }, 300);
-                this.progressBarStyle.transform = 'translateX(-' + (100 - percentDoneAtInit) + '%)';
                 setTimeout(() => {
                     this.progressBarStyle.transform = 'translateX(0%)';
                 }, 900);
+            },
+            musicJumpTo: function (event) {
+                var total = Math.round(event.target.getBoundingClientRect().width);
+                var selection = Math.round(event.x - 50);
+                // console.log('selection / total : ' + selection + '/' + total + ' = ' + Math.round(selection / total * 100));
+                var percent = selection / total;
+                var start = Math.round(percent * this.song.duration);
+                this.player.currentTime = start;
+                this.setProgressBar('musicJumpTo');
             },
             getTimestamp: function () {
                 return Math.round(new Date().getTime() / 1000);
             },
             initPlayer: function () {
-                if (this.options.audioServerSide) {
+                if (this.player || this.options.audioServerSide) {
                     return;
                 }
                 this.player = document.querySelector('audio');
-                this.player.autoplay = this.options.doAutoplay;
+                this.player.autoplay = false; // leave native autoplay deactivated
                 this.player.addEventListener('ended', this.nextSong);
                 this.player.addEventListener('pause', this.updateStatus);
                 this.player.addEventListener('play', this.updateStatus);
@@ -280,39 +290,38 @@ window.onload = function () {
                     this.notify('info', 'key "' + event.key + '" is not handled yet');
                 }
             },
+            getWebId: function () {
+                var id = '';
+                id += navigator.userAgent.match(/Chrome\/(\d\d)/)[0].replace('/', ' ');
+                id += ' (' + navigator.platform + ')';
+                id += ' [' + navigator.language + ']';
+                return id;
+            },
             musicIs: function (musicIs) {
                 this.socket.emit('music is', musicIs);
             },
-            nextSong: function () {
+            nextSong: function (event) {
                 this.isLoading = true;
-                // set player time to 0 for next song
-                if (this.options.audioClientSide) {
+                this.resetProgressBar();
+                if (this.player) {
                     this.player.pause();
                     this.player.currentTime = 0;
                 }
                 this.socket.emit('music is', 'next');
+                this.socket.emit('event', 'next asked from ' + this.getWebId() + ' because of ' + event.type);
             },
             pauseResume: function () {
                 if (this.options.audioClientSide) {
                     if (this.player.paused) {
                         this.options.doAutoplay = true;
-                        this.updatePlayer();
                         this.player.play();
-                        this.isPlaying = true;
+                        // this.isPlaying = true;
                         this.notify('info', 'song  was paused, resuming...');
                     } else {
                         this.player.pause();
                         this.options.doAutoplay = false;
                         this.notify('info', 'song  was playing, do pause');
                     }
-                } else if (this.options.audioServerSide) {
-                    this.options.audioServerSide = false;
-                    this.options.audioClientSide = true;
-                    this.options.canUpdate = false;
-                    this.initPlayer();
-                    this.updatePlayer();
-                } else {
-                    this.notify('Error', 'non handled case in pauseResume', 'error');
                 }
             },
             notify: function (action, message, type, withSound) {
@@ -328,8 +337,8 @@ window.onload = function () {
                 if (withSound && this.options.doSoundNotifications) {
                     this.sounds.notification.play();
                 }
-                if (console[action]) {
-                    console[action](message);
+                if (console[action.toLowerCase()]) {
+                    console[action.toLowerCase()](message);
                 } else {
                     // in order to align logs :p
                     while (action.length < 9) {
@@ -384,10 +393,9 @@ window.onload = function () {
             cron: function () {
                 // console.log('in cron');
                 if (this.isPlaying && !this.song.hasBeenMarked) {
-                    var songEndIn = (this.song.endTimestamp - this.getTimestamp());
-                    // console.log('song end in ', songEndIn, 'seconds');
-                    if ([34, 21, 13, 8, 5].indexOf(songEndIn) !== -1) {
-                        this.notify('Hey', 'Song end in ' + songEndIn + ' seconds', 'info', true);
+                    var secondsLeft = this.getSecondsLeft();
+                    if ([34, 21, 13, 8, 5].indexOf(secondsLeft) !== -1) {
+                        this.notify('Hey', 'Song end in ' + secondsLeft + ' seconds', 'info', true);
                     }
                 }
             },
@@ -411,6 +419,9 @@ window.onload = function () {
                 }
 
                 this.updateEndpointAddress();
+            },
+            getSecondsLeft: function () {
+                return Math.round(this.song.duration - this.player.currentTime);
             }
         },
         mounted() {
