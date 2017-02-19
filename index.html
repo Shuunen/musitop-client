@@ -475,6 +475,9 @@
             <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
                 Toast notifications <input type="checkbox" v-model="options.doToastNotifications">
             </label>
+            <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
+                Autoplay music <input type="checkbox" v-model="options.doAutoplay">
+            </label>
         </div>
         <div class="gradient-overlay absolute-full">
             <img v-bind:src="song.cover" alt="song cover for background">
@@ -531,7 +534,7 @@
             <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
         </svg>
         <div class="toasts">
-            <toast v-for="(toast, index) in toasts" v-bind:toast="toast"></toast>
+            <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
         </div>
         <!-- dynamic styles -->
         <div v-html="dynamicStyles"></div>

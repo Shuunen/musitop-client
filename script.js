@@ -49,9 +49,15 @@ window.onload = function () {
                 primary: 'grey',
                 secondary: 'whitesmoke'
             },
-            toasts: [],
+            toaster: {
+                stack: [],
+                lastOne: {
+                    timestamp: null,
+                    message: ''
+                }
+            },
             options: {
-                endpoint: 'https://localhost:1404',
+                endpoint: 'https://musitop.io:1404',
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
@@ -65,7 +71,8 @@ window.onload = function () {
                 },
                 canUpdate: true,
                 doSoundNotifications: true,
-                doToastNotifications: true
+                doToastNotifications: true,
+                doAutoplay: false
             }
         },
         methods: {
@@ -147,6 +154,7 @@ window.onload = function () {
                 this.song.shouldStartAt = shouldStartAt;
                 // this.notify('info', 'song shouldStartAt : ' + shouldStartAt + ' seconds');
                 if (this.options.audioClientSide) {
+                    this.player.autoplay = this.options.doAutoplay;
                     if (this.player.src != this.song.stream) {
                         this.player.src = this.song.stream;
                     }
@@ -245,7 +253,7 @@ window.onload = function () {
                     return;
                 }
                 this.player = document.querySelector('audio');
-                // this.player.autoplay = true;
+                this.player.autoplay = this.options.doAutoplay;
                 this.player.addEventListener('ended', this.nextSong);
                 this.player.addEventListener('pause', this.updateStatus);
                 this.player.addEventListener('play', this.updateStatus);
@@ -328,12 +336,27 @@ window.onload = function () {
                 /* eslint-enable no-console */
             },
             toast: function (type, title, message, delay) {
-                this.toasts.push({
+                var shouldNotToast = false;
+                // check if toast is a twin of last one
+                if (this.toaster.lastOne.timestamp) {
+                    var secondsSinceLastOne = this.getTimestamp() - this.toaster.lastOne.timestamp;
+                    var contentVaryWithLastOne = (type + title + message) !== this.toaster.lastOne.message;
+                    shouldNotToast = (secondsSinceLastOne <= 2) && !contentVaryWithLastOne;
+                }
+                // avoid toasting if needed
+                if (shouldNotToast) {
+                    return;
+                }
+                // do toast
+                this.toaster.stack.push({
                     type: type,
                     title: title,
                     message: message,
                     delay: (delay || 4000)
                 });
+                // to check with the next one
+                this.toaster.lastOne.timestamp = this.getTimestamp();
+                this.toaster.lastOne.message = (type + title + message);
             },
             initServiceWorker: function () {
                 if ('serviceWorker' in navigator) {
