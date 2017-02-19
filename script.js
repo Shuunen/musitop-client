@@ -57,7 +57,10 @@ window.onload = function () {
                 }
             },
             options: {
-                endpoint: 'https://musitop.io:1444',
+                endpoint: {
+                    address: '',
+                    port: 666
+                },
                 audioClientSide: false,
                 audioServerSide: false,
                 keyboardTriggers: {
@@ -78,7 +81,7 @@ window.onload = function () {
         methods: {
             initSocket: function () {
                 this.notify('Socket', 'client side connecting...');
-                this.socket = io(this.options.endpoint);
+                this.socket = io(this.options.endpoint.address + ':' + this.options.endpoint.port);
                 this.socket.on('metadata', this.onMetadata);
                 this.socket.on('music was', this.onMusicWas);
                 this.socket.on('options', this.onOptions);
@@ -101,7 +104,7 @@ window.onload = function () {
                 this.song.startTimestamp = metadata.startTimestamp;
                 this.song.endTimestamp = metadata.startTimestamp + this.song.duration;
                 this.song.hasBeenMarked = false;
-                this.song.stream = this.options.endpoint + metadata.stream + '?t=' + metadata.startTimestamp;
+                this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.startTimestamp;
                 this.updateCover(metadata.picture[0]); // specific process for covers
                 this.resetProgressBar();
                 this.updatePlayer();
@@ -386,11 +389,32 @@ window.onload = function () {
                         this.notify('Hey', 'Song end in ' + songEndIn + ' seconds', 'info', true);
                     }
                 }
+            },
+            updateEndpointAddress: function () {
+                var doPointToHttps = this.options.endpoint.address.indexOf('https') !== -1;
+                this.options.endpoint.port = doPointToHttps ? 1444 : 1404;
+                this.initSocket();
+            },
+            guessDefaultEndpoint: function () {
+
+                var host = document.location.hostname; // "192.168.31.12" | "musitop.io" | "shuunen.github.io"
+                var protocol = document.location.protocol; // "http:" | "https:"
+                if (host === 'shuunen.github.io') {
+                    // if user is using github hosted client, we can imagine server is on his localhost : musitop.io
+                    // and serving https content, no other choice if you use https shuunen.github.io
+                    // you need to use https distant server, and if you want to use http shuunen.github.io, you can't :D
+                    this.options.endpoint.address = 'https://musitop.io';
+                } else {
+                    // if user is using is own client, he can either use https or http version
+                    this.options.endpoint.address = protocol + '//' + host;
+                }
+
+                this.updateEndpointAddress();
             }
         },
         mounted() {
             this.notify('info', this.app.name + ' init');
-            this.initSocket();
+            this.guessDefaultEndpoint();
             this.initKeyboard();
             this.initServiceWorker();
             setInterval(this.cron, 1000);

@@ -430,13 +430,16 @@
         .option-line {
             display: flex;
             margin-bottom: 20px;
-            width: 350px;
-            justify-content: space-between;
+            width: 380px;
             cursor: pointer;
             transform: skewX(0);
             opacity: 1;
             transition: opacity .2s, transform .3s;
             will-change: opacity, transform;
+        }
+
+        .option-line>input:first-of-type {
+            margin-left: auto;
         }
 
         .option-line.disabled {
@@ -448,12 +451,18 @@
             padding: 4px 8px;
             border: none;
             border-radius: 3px;
+            width: 130px;
+        }
+
+        input[type="text"].endpoint-port {
+            width: 30px;
         }
 
         input[type="checkbox"] {
             cursor: pointer;
             width: 16px;
             height: 16px;
+            margin-right: 25%;
         }
 
     </style>
@@ -467,7 +476,7 @@
         </svg>
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
             <label class="option-line">
-                Server location <input type="text" v-model.lazy="options.endpoint" v-on:change="initSocket">
+                Server <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
             </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
                 Sound notifications <input type="checkbox" v-model="options.doSoundNotifications">
