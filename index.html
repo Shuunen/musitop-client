@@ -415,7 +415,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 30;
             opacity: 0;
             transition: opacity .5s;
@@ -429,13 +429,19 @@
 
         .option-line {
             display: flex;
+            flex-wrap: wrap;
             margin-bottom: 20px;
-            width: 380px;
+            width: 350px;
+            max-width: 80vw;
             cursor: pointer;
             transform: skewX(0);
             opacity: 1;
             transition: opacity .2s, transform .3s;
             will-change: opacity, transform;
+        }
+
+        .option-line>span {
+            margin-right: 10px;
         }
 
         .option-line>input:first-of-type {
@@ -451,11 +457,13 @@
             padding: 4px 8px;
             border: none;
             border-radius: 3px;
-            width: 130px;
+            width: 125px;
         }
 
         input[type="text"].endpoint-port {
-            width: 30px;
+            width: 28px;
+            padding: 4px 6px;
+            text-indent: -1px;
         }
 
         input[type="checkbox"] {
@@ -476,16 +484,16 @@
         </svg>
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
             <label class="option-line">
-                Server <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
+                <span>Server</span><input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
             </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
-                Sound notifications <input type="checkbox" v-model="options.doSoundNotifications">
+                <span>Sound notifications</span><input type="checkbox" v-model="options.doSoundNotifications">
             </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
-                Toast notifications <input type="checkbox" v-model="options.doToastNotifications">
+                <span>Toast notifications</span><input type="checkbox" v-model="options.doToastNotifications">
             </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
-                Autoplay music <input type="checkbox" v-model="options.doAutoplay">
+                <span>Autoplay music</span><input type="checkbox" v-model="options.doAutoplay">
             </label>
         </div>
         <div class="gradient-overlay absolute-full">

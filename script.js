@@ -298,6 +298,7 @@ window.onload = function () {
                         this.options.doAutoplay = true;
                         this.updatePlayer();
                         this.player.play();
+                        this.isPlaying = true;
                         this.notify('info', 'song  was paused, resuming...');
                     } else {
                         this.player.pause();
