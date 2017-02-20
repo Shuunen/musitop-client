@@ -108,6 +108,18 @@
             object-fit: cover;
         }
 
+        @keyframes background-cover-move {
+            0% {
+                transform: scale(1) rotate(0) translate(0, 0);
+            }
+            50% {
+                transform: scale(1.4) rotate(20deg) translate(60px, 60px);
+            }
+            100% {
+                transform: scale(1) rotate(0) translate(20px, 20px);
+            }
+        }
+
         .cover-blur {
             left: -40px;
             top: -40px;
@@ -116,6 +128,8 @@
             min-width: calc(100% + 80px);
             position: absolute;
             z-index: 0;
+            animation: background-cover-move 30s linear infinite;
+            animation-direction: alternate;
         }
 
         .inside-shadow {
