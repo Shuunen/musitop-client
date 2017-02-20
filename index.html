@@ -308,8 +308,8 @@
             position: absolute;
             bottom: 0;
             z-index: 20;
-            width: 40%;
-            max-width: 400px;
+            width: 60%;
+            max-width: 350px;
         }
 
         .toasts {
@@ -517,7 +517,8 @@
         <div class="gradient-overlay absolute-full">
             <img v-bind:src="song.cover" alt="song cover for background">
         </div>
-        <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" />
+        <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
+        />
         <div class="player" v-bind:class="{ visible: isConnected }">
             <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
                 <img class="cover" v-bind:src="song.cover" alt="song cover" />
@@ -577,13 +578,14 @@
         <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
 web id : {{ getWebId() }}
 isConnected ? <span v-html="isConnected ? '<strong>YES</strong>':'no'"></span>
+audioClientSide ? <span v-html="options.audioClientSide ? '<strong>YES</strong>':'no'"></span>
 doAutoplay ? <span v-html="options.doAutoplay ? '<strong>YES</strong>':'no'"></span>
 isLoading ?  <span v-html="isLoading ? '<strong>YES</strong>':'no'"></span>
 isPlaying ? <span v-html="isPlaying ? '<strong>YES</strong>':'no'"></span>
 isPaused ? <span v-html="isPaused ? '<strong>YES</strong>':'no'"></span>
 song canPlay ? <span v-html="song.canPlay ? '<strong>YES</strong>':'no'"></span>
 song duration : <span v-html="song.duration"></span> seconds
-secondsLeft : <span v-html="secondsLeft"></span> seconds
+secondsLeft : <span v-html="getSecondsLeft()"></span> seconds
         </pre>
     </div>
     <!-- scripts -->
