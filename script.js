@@ -328,6 +328,7 @@ window.onload = function () {
                         // console.debug('player.play (pauseResume)');
                         this.player.play();
                         this.notify('info', 'song  was paused, resuming...');
+                        this.setProgressBar();
                     } else {
                         // console.debug('player.pause (pauseResume)');
                         this.player.pause();
