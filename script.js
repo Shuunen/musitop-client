@@ -306,19 +306,18 @@ window.onload = function () {
                 return id;
             },
             musicIs: function (musicIs) {
+                if (musicIs === 'bad' || musicIs === 'next') {
+                    this.isLoading = true;
+                    this.song.waitingForNext = true;
+                    this.resetProgressBar();
+                    if (this.player) {
+                        this.player.pause();
+                    }
+                }
                 this.socket.emit('music is', musicIs);
             },
             nextSong: function (event) {
-                this.isLoading = true;
-                this.song.waitingForNext = true;
-                this.resetProgressBar();
-                if (this.player) {
-                    // console.debug('pause (nextSong)');
-                    this.player.pause();
-                    // console.debug('currentTime = 0 (nextSong)');
-                    this.player.currentTime = 0;
-                }
-                this.socket.emit('music is', 'next');
+                this.musicIs('next');
                 this.socket.emit('event', 'next asked from ' + this.getWebId() + ' because of ' + event.type);
             },
             pauseResume: function () {
@@ -328,7 +327,7 @@ window.onload = function () {
                         // console.debug('player.play (pauseResume)');
                         this.player.play();
                         this.notify('info', 'song  was paused, resuming...');
-                        this.setProgressBar();
+                        setTimeout(this.setProgressBar, 100);
                     } else {
                         // console.debug('player.pause (pauseResume)');
                         this.player.pause();
