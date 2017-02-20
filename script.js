@@ -240,8 +240,10 @@ window.onload = function () {
             setProgressBar: function (from) {
                 // this.notify('Info', 'in setProgressBar from "' + from + '"');
                 var secondsLeft = this.getSecondsLeft();
-                var percentPlayed = Math.round((this.song.duration - secondsLeft) / this.song.duration * 10000) / 100;
-                percentPlayed -= 2; // because
+                var secondsPassed = this.song.duration - secondsLeft;
+                var percentPlayed = Math.round(secondsPassed / this.song.duration * 10000) / 100;
+                // console.log('secondsPassed / duration : ' + secondsPassed + '/' + this.song.duration + ' = ' + percentPlayed + '%');
+                // percentPlayed -= 2; // because
                 this.progressBarStyle.transitionDuration = '0s';
                 this.progressBarStyle.transform = 'translateX(-' + (100 - percentPlayed) + '%)';
                 // this.notify('Info', 'percentPlayed : ' + percentPlayed + '%');
@@ -254,13 +256,15 @@ window.onload = function () {
             },
             musicJumpTo: function (event) {
                 var total = Math.round(event.target.getBoundingClientRect().width);
-                var selection = Math.round(event.x - 50);
-                // console.log('selection / total : ' + selection + '/' + total + ' = ' + Math.round(selection / total * 100));
+                var selection = Math.round(event.layerX);
+                // console.log('selection / total : ' + selection + '/' + total + ' = ' + Math.round(selection / total * 100) + '%');
                 var percent = selection / total;
                 var start = Math.round(percent * this.song.duration);
                 // console.debug('currentTime = ' + start);
                 this.player.currentTime = start;
-                this.setProgressBar('musicJumpTo');
+                setTimeout(() => {
+                    this.setProgressBar('musicJumpTo');
+                }, 100);
             },
             getTimestamp: function () {
                 return Math.round(new Date().getTime() / 1000);
