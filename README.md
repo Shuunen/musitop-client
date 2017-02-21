@@ -2,6 +2,8 @@
 
 It will allow you to listen & control a [Musitop](https://github.com/Shuunen/musitop) server.
 
+![Looking](https://github.com/Shuunen/musitop-client/blob/master/designs/v3.0_c.png)
+
 ## Huge thanks
 
 * Anastasya-Bolshakova : for [pretty icons](https://www.iconfinder.com/nastu_bol)
