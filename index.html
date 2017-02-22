@@ -241,6 +241,7 @@
             will-change: transform;
             transition-property: transform;
             transition-duration: 60s;
+            transition-timing-function: ease-in-out;
         }
 
         footer {
@@ -466,6 +467,11 @@
             will-change: opacity, transform;
         }
 
+        .option-line.title {
+            justify-content: center;
+            font-size: 2em;
+        }
+
         .option-line>span {
             margin-right: 10px;
         }
@@ -509,6 +515,9 @@
             <use xlink:href="icons/icons.svg#settings"></use>
         </svg>
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
+            <div class="title option-line">
+                Options
+            </div>
             <label class="option-line">
                 <span>Server</span><input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
             </label>
@@ -523,6 +532,9 @@
             </label>
             <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
                 <span>Debug panel</span><input type="checkbox" v-model="options.debugActive">
+            </label>
+            <label class="option-line">
+                <span>Version {{ app.version}}</span><input type="button" v-on:click="updateApp" value="check for updates">
             </label>
             <label class="option-line" v-on:click="document.location.href = document.location.href">
                 <span>Reload client</span>

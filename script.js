@@ -20,7 +20,8 @@ window.onload = function () {
         el: '#app',
         data: {
             app: {
-                name: 'Musitop'
+                name: 'Musitop',
+                version: 0
             },
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
@@ -434,6 +435,26 @@ window.onload = function () {
             },
             getSecondsLeft: function () {
                 return Math.round(this.song.duration - this.player.currentTime);
+            },
+            updateApp: function () {
+                var request = new XMLHttpRequest();
+                request.onload = () => {
+                    if (this.status >= 200 && this.status < 400) {
+                        // Success!
+                        var resp = this.response;
+                        this.notify('Inside', 'onload success', 'info');
+                        console.log(resp);
+                    } else {
+                        // We reached our target server, but it returned an error
+                        this.notify('Inside', 'onload failed', 'info');
+                    }
+                };
+                request.onerror = function () {
+                    // There was a connection error of some sort
+                    this.notify('Inside', 'onerror', 'info');
+                };
+                request.open('get', '/update', true);
+                request.send();
             }
         },
         mounted() {
