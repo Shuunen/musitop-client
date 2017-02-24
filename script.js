@@ -98,7 +98,7 @@ window.onload = function () {
             },
             onMetadata: function (metadata) {
                 // avoid bothering this client with other clients getting metadata
-                if (metadata.uid === this.song.uid) {
+                if (!metadata || metadata.uid === this.song.uid) {
                     return;
                 }
                 this.notify('Socket', 'received fresh metadata infos');
@@ -451,8 +451,8 @@ window.onload = function () {
                         request.onerror();
                     }
                 };
-                request.onerror = function () {
-                    this.notify('Error', 'GET ' + url + ' failed', 'error');
+                request.onerror = () => {
+                    this.notify('Error', 'GET ' + url + ' failed', 'alert');
                 };
                 request.open('get', url, true);
                 request.send();
@@ -466,7 +466,7 @@ window.onload = function () {
                 this.getJson('/server/update', (data) => {
                     this.notify('info', data);
                     if (data.error) {
-                        this.notify('Error', 'updateServer git pull failed', 'error', true);
+                        this.notify('Error', 'updateServer git pull failed', 'alert', true);
                         this.notify('Error', data.error);
                     } else if (data.changes === 'none') {
                         this.notify('Info', 'Server has already the latest version', 'info');
