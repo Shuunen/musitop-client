@@ -472,7 +472,7 @@ window.onload = function () {
                         this.notify('Info', 'Server has already the latest version', 'info');
                     } else if (data.changes) {
                         this.notify('Info', 'Server has been updated to the latest version', 'success', true);
-                        this.getServerVersion();
+                        // this.getServerVersion(); // no need because if server update & restart, onConnection will getServerVersion
                     } else {
                         this.notify('Info', 'un-handled case in updateServer response');
                     }
