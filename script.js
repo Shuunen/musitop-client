@@ -464,25 +464,37 @@ window.onload = function () {
                 });
             },
             updateServer: function () {
-                this.getJson('/server/update', (data) => {
-                    // this.notify('info', data);
-                    if (data.error) {
-                        this.notify('Error', 'updateServer git pull failed', 'alert', true);
-                        this.notify('Error', data.error);
-                    } else if (data.changes === 'none') {
-                        this.notify('Info', 'Server has already the latest version', 'info');
-                    } else if (data.changes) {
-                        this.notify('Info', 'Server has been updated to the latest version', 'success', true);
-                        // this.getServerVersion(); // no need because if server update & restart, onConnection will getServerVersion
-                    } else {
-                        this.notify('Info', 'un-handled case in updateServer response');
-                    }
-                });
+                this.getJson('/server/update', this.updateHandler);
             },
             updateClient: function () {
-                this.getJson('/client/update', (data) => {
-                    this.notify('info', data);
-                });
+                this.getJson('/client/update', this.updateHandler);
+            },
+            updateHandler: function (data) {
+                // this.notify('info', data);
+                if (data.error) {
+                    this.notify('Error', 'git pull failed', 'alert', true);
+                    this.notify('Error', data.error);
+                } else if (data.changes === 'none') {
+                    this.notify('Info', this.firstCap(data.target) + ' already at latest version', 'info');
+                } else if (data.changes) {
+                    this.notify('Info', this.firstCap(data.target) + ' updated to latest version', 'success', true);
+                    // this.getServerVersion(); // no need because if server update & restart, onConnection will getServerVersion
+                    if (data.target === 'client') {
+                        this.notify('Info', 'Restarting...', 'success');
+                        setTimeout(this.restart, 2000);
+                    }
+                } else {
+                    this.notify('Info', 'un-handled case in updateHandler');
+                }
+            },
+            restart: function () {
+                document.location.href = document.location.href;
+            },
+            firstCap: function (str) {
+                str = (str + '');
+                str = str.toLowerCase();
+                str = str[0].toUpperCase() + str.slice(1);
+                return str;
             }
         },
         mounted() {
