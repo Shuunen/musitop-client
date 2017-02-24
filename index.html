@@ -504,7 +504,6 @@
             height: 16px;
             margin-right: 25%;
         }
-
     </style>
 </head>
 
@@ -513,95 +512,95 @@
         <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
             v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
-        </svg>
-        <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
-            <div class="title option-line">
-                Options
-            </div>
-            <label class="option-line">
+            </svg>
+            <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
+                <div class="title option-line">
+                    Options
+                </div>
+                <label class="option-line">
                 <span>Server</span><input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
             </label>
-            <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
+                <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
                 <span>Sound notifications</span><input type="checkbox" v-model="options.doSoundNotifications">
             </label>
-            <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
+                <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
                 <span>Toast notifications</span><input type="checkbox" v-model="options.doToastNotifications">
             </label>
-            <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
+                <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
                 <span>Autoplay music</span><input type="checkbox" v-model="options.doAutoplay">
             </label>
-            <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
+                <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
                 <span>Debug panel</span><input type="checkbox" v-model="options.debugActive">
             </label>
-            <label class="option-line">
-                <span>Version {{ app.version}}</span><input type="button" v-on:click="updateApp" value="check for updates">
+                <label class="option-line">
+                <span>Server version v{{ server.version }}</span><input type="button" v-on:click="updateServer" value="check for updates">
             </label>
-            <label class="option-line" v-on:click="document.location.href = document.location.href">
+                <label class="option-line" v-on:click="document.location.href = document.location.href">
                 <span>Reload client</span>
             </label>
-        </div>
-        <div class="gradient-overlay absolute-full">
-            <img v-bind:src="song.cover" alt="song cover for background">
-        </div>
-        <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
-        />
-        <div class="player" v-bind:class="{ visible: isConnected }">
-            <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
-                <img class="cover" v-bind:src="song.cover" alt="song cover" />
             </div>
-            <div class="player-top">
-                <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
-                    <use xlink:href="icons/icons.svg#like"></use>
-                </svg>
-                <svg class="icon top right" v-show="isPaused && !isLoading" v-on:click="pauseResume" viewbox="0 0 128 128">
-                    <use xlink:href="icons/icons.svg#run"></use>
-                </svg>
-                <svg class="icon top right" v-on:click="pauseResume" v-show="options.audioClientSide && (isPlaying && !isLoading)" viewbox="0 0 128 128">
-                    <use xlink:href="icons/icons.svg#pause"></use>
-                </svg>
+            <div class="gradient-overlay absolute-full">
+                <img v-bind:src="song.cover" alt="song cover for background">
             </div>
-            <div class="player-center">
-                <svg v-show="!isLoading" v-on:click="nextSong" class="icon" viewbox="0 0 128 128">
-                    <use xlink:href="icons/icons.svg#right"></use>
-                </svg>
-                <div v-show="isLoading" class="spinner"></div>
-            </div>
-            <div class="player-bottom">
-                <strong class="artist bottom left">{{ song.artist }}</strong>
-                <!-- space to help when copying artist & title -->
-                <span> </span>
-                <div class="title bottom left">{{ song.title }}</div>
-                <svg class="icon icon-dislike bottom right" v-on:click="musicIs('bad')" viewbox="0 0 24 24">
-                    <use xlink:href="icons/icons.svg#unlike-2"></use>
-                </svg>
-            </div>
-            <div class="player-inner-gradient absolute-full"></div>
-            <div class="player-border absolute-full"></div>
-            <div class="progress-bar-wrapper" v-show="isPlaying">
-                <div class="progress-bar color-primary" v-on:click="musicJumpTo">
-                    <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
+            <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
+            />
+            <div class="player" v-bind:class="{ visible: isConnected }">
+                <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
+                    <img class="cover" v-bind:src="song.cover" alt="song cover" />
+                </div>
+                <div class="player-top">
+                    <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
+                        <use xlink:href="icons/icons.svg#like"></use>
+                    </svg>
+                    <svg class="icon top right" v-show="isPaused && !isLoading" v-on:click="pauseResume" viewbox="0 0 128 128">
+                        <use xlink:href="icons/icons.svg#run"></use>
+                    </svg>
+                    <svg class="icon top right" v-on:click="pauseResume" v-show="options.audioClientSide && (isPlaying && !isLoading)" viewbox="0 0 128 128">
+                        <use xlink:href="icons/icons.svg#pause"></use>
+                    </svg>
+                </div>
+                <div class="player-center">
+                    <svg v-show="!isLoading" v-on:click="nextSong" class="icon" viewbox="0 0 128 128">
+                        <use xlink:href="icons/icons.svg#right"></use>
+                    </svg>
+                    <div v-show="isLoading" class="spinner"></div>
+                </div>
+                <div class="player-bottom">
+                    <strong class="artist bottom left">{{ song.artist }}</strong>
+                    <!-- space to help when copying artist & title -->
+                    <span> </span>
+                    <div class="title bottom left">{{ song.title }}</div>
+                    <svg class="icon icon-dislike bottom right" v-on:click="musicIs('bad')" viewbox="0 0 24 24">
+                        <use xlink:href="icons/icons.svg#unlike-2"></use>
+                    </svg>
+                </div>
+                <div class="player-inner-gradient absolute-full"></div>
+                <div class="player-border absolute-full"></div>
+                <div class="progress-bar-wrapper" v-show="isPlaying">
+                    <div class="progress-bar color-primary" v-on:click="musicJumpTo">
+                        <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <audio controls>
-            <source type="audio/mpeg"> Your browser does not support the audio element.
-        </audio>
-        <div class="inside-shadow absolute-full"></div>
-        <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
-            <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
-            <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
-            <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
-            <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
-            <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
-            <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
-        </svg>
-        <div class="toasts">
-            <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
-        </div>
-        <!-- dynamic styles -->
-        <div v-html="dynamicStyles"></div>
-        <!-- debug vars -->
-        <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
+            <audio controls>
+                <source type="audio/mpeg"> Your browser does not support the audio element.
+            </audio>
+            <div class="inside-shadow absolute-full"></div>
+            <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
+                <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
+                <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
+                <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
+                <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
+                <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
+                <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
+            </svg>
+            <div class="toasts">
+                <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
+            </div>
+            <!-- dynamic styles -->
+            <div v-html="dynamicStyles"></div>
+            <!-- debug vars -->
+            <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
 web id : {{ getWebId() }}
 isConnected ? <span v-html="isConnected ? '<strong>YES</strong>':'no'"></span>
 audioClientSide ? <span v-html="options.audioClientSide ? '<strong>YES</strong>':'no'"></span>

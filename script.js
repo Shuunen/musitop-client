@@ -21,7 +21,7 @@ window.onload = function () {
         data: {
             app: {
                 name: 'Musitop',
-                version: 0
+                version: 1
             },
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
@@ -79,6 +79,9 @@ window.onload = function () {
                 doToastNotifications: true,
                 doAutoplay: false,
                 debugActive: false
+            },
+            server: {
+                version: 0
             }
         },
         methods: {
@@ -142,6 +145,7 @@ window.onload = function () {
             onConnection: function () {
                 this.notify('Socket', 'client side connection init');
                 this.isConnected = true;
+                this.getServerVersion();
             },
             onOptions: function (options) {
                 if (!this.options.canUpdate) {
@@ -436,25 +440,43 @@ window.onload = function () {
             getSecondsLeft: function () {
                 return Math.round(this.song.duration - this.player.currentTime);
             },
-            updateApp: function () {
+            getJson: function (url, success) {
                 var request = new XMLHttpRequest();
-                request.onload = () => {
-                    if (this.status >= 200 && this.status < 400) {
-                        // Success!
-                        var resp = this.response;
-                        this.notify('Inside', 'onload success', 'info');
-                        console.log(resp);
+                request.onload = (event) => {
+                    var req = event.target;
+                    if (req.status >= 200 && req.status < 400) {
+                        var data = JSON.parse(req.response);
+                        success(data);
                     } else {
-                        // We reached our target server, but it returned an error
-                        this.notify('Inside', 'onload failed', 'info');
+                        request.onerror();
                     }
                 };
                 request.onerror = function () {
-                    // There was a connection error of some sort
-                    this.notify('Inside', 'onerror', 'info');
+                    this.notify('Error', 'GET ' + url + ' failed', 'error');
                 };
-                request.open('get', '/update', true);
+                request.open('get', url, true);
                 request.send();
+            },
+            getServerVersion: function () {
+                this.getJson('/server/version', (data) => {
+                    this.server.version = data.version;
+                });
+            },
+            updateServer: function () {
+                this.getJson('/server/update', (data) => {
+                    this.notify('info', data);
+                    if (data.error) {
+                        this.notify('Error', 'updateServer git pull failed', 'error', true);
+                        this.notify('Error', data.error);
+                    } else if (data.changes === 'none') {
+                        this.notify('Info', 'Server has already the latest version', 'info');
+                    } else if (data.changes) {
+                        this.notify('Info', 'Server has been updated to the latest version', 'success', true);
+                        this.getServerVersion();
+                    } else {
+                        this.notify('Info', 'un-handled case in updateServer response');
+                    }
+                });
             }
         },
         mounted() {
