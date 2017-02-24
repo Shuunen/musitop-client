@@ -457,8 +457,10 @@
         .option-line {
             display: flex;
             flex-wrap: wrap;
+            align-content: center;
+            justify-content: space-between;
             margin-bottom: 20px;
-            width: 350px;
+            width: 390px;
             max-width: 80vw;
             cursor: pointer;
             transform: skewX(0);
@@ -467,17 +469,15 @@
             will-change: opacity, transform;
         }
 
+        .option-line > span {
+            display: flex;
+            align-items: center;
+        }
+
         .option-line.title {
             justify-content: center;
             font-size: 2em;
-        }
-
-        .option-line>span {
-            margin-right: 10px;
-        }
-
-        .option-line>input:first-of-type {
-            margin-left: auto;
+            margin-bottom: 40px;
         }
 
         .option-line.disabled {
@@ -502,7 +502,15 @@
             cursor: pointer;
             width: 16px;
             height: 16px;
-            margin-right: 25%;
+            margin: 0;
+        }
+
+        input[type="button"] {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            background: white;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -514,30 +522,61 @@
             <use xlink:href="icons/icons.svg#settings"></use>
             </svg>
             <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
-                <div class="title option-line">
-                    Options
-                </div>
+                <div class="title option-line">Options</div>
                 <label class="option-line">
-                <span>Server</span><input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">&nbsp;:&nbsp;<input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
-            </label>
+                    <span>Server endpoint</span>
+                    <span>
+                        <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">
+                        &nbsp;:&nbsp;
+                        <input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
+                    </span>
+                </label>
                 <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
-                <span>Sound notifications</span><input type="checkbox" v-model="options.doSoundNotifications">
-            </label>
+                    <span>Sound notifications</span>
+                    <span>
+                        <input type="checkbox" v-model="options.doSoundNotifications">
+                        &nbsp;&nbsp;
+                        {{ options.doSoundNotifications ? 'enabled' : 'disabled' }}
+                    </span>
+                </label>
                 <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
-                <span>Toast notifications</span><input type="checkbox" v-model="options.doToastNotifications">
-            </label>
+                    <span>Toast notifications</span>
+                    <span>
+                        <input type="checkbox" v-model="options.doToastNotifications">
+                        &nbsp;&nbsp;
+                        {{ options.doToastNotifications ? 'enabled' : 'disabled' }}
+                    </span>
+                </label>
                 <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
-                <span>Autoplay music</span><input type="checkbox" v-model="options.doAutoplay">
-            </label>
+                    <span>Autoplay music</span>
+                    <span>
+                        <input type="checkbox" v-model="options.doAutoplay">
+                        &nbsp;&nbsp;
+                        {{ options.doAutoplay ? 'enabled' : 'disabled' }}
+                    </span>
+                </label>
                 <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
-                <span>Debug panel</span><input type="checkbox" v-model="options.debugActive">
-            </label>
+                    <span>Debug panel</span>
+                    <span>
+                        <input type="checkbox" v-model="options.debugActive">
+                        &nbsp;&nbsp;
+                        {{ options.debugActive ? 'enabled' : 'disabled' }}
+                    </span>
+                </label>
                 <label class="option-line">
-                <span>Server version v{{ server.version }}</span><input type="button" v-on:click="updateServer" value="check for updates">
-            </label>
-                <label class="option-line" v-on:click="document.location.href = document.location.href">
-                <span>Reload client</span>
-            </label>
+                    <span>Server version {{ server.version }}</span>
+                    <span>
+                        <input type="button" v-on:click="updateServer" value="check for updates">
+                    </span>
+                </label>
+                <label class="option-line">
+                    <span>Client version {{ app.version }}</span>
+                     <span>
+                         <input type="button" v-on:click="updateClient" value="check for updates">
+                         &nbsp;&nbsp;
+                         <input type="button" v-on:click="document.location.href = document.location.href" value="reload">
+                    </span>
+                </label>
             </div>
             <div class="gradient-overlay absolute-full">
                 <img v-bind:src="song.cover" alt="song cover for background">

@@ -21,7 +21,7 @@ window.onload = function () {
         data: {
             app: {
                 name: 'Musitop',
-                version: 1
+                version: '2.1.0'
             },
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
@@ -81,7 +81,7 @@ window.onload = function () {
                 debugActive: false
             },
             server: {
-                version: 0
+                version: '0.0.0'
             }
         },
         methods: {
@@ -458,13 +458,14 @@ window.onload = function () {
                 request.send();
             },
             getServerVersion: function () {
+                // this.notify('info', data);
                 this.getJson('/server/version', (data) => {
                     this.server.version = data.version;
                 });
             },
             updateServer: function () {
                 this.getJson('/server/update', (data) => {
-                    this.notify('info', data);
+                    // this.notify('info', data);
                     if (data.error) {
                         this.notify('Error', 'updateServer git pull failed', 'alert', true);
                         this.notify('Error', data.error);
@@ -476,6 +477,11 @@ window.onload = function () {
                     } else {
                         this.notify('Info', 'un-handled case in updateServer response');
                     }
+                });
+            },
+            updateClient: function () {
+                this.getJson('/client/update', (data) => {
+                    this.notify('info', data);
                 });
             }
         },
