@@ -111,7 +111,8 @@ window.onload = function () {
                 this.song.hasBeenMarked = false;
                 this.song.waitingForNext = false;
                 this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
-                this.updateCover(metadata.picture[0]); // specific process for covers
+                this.song.cover = 'cover.jpg' + '?t=' + metadata.uid;
+                this.getColorPaletteFromCover();
                 this.resetProgressBar();
                 this.setPlayerSource();
             },
@@ -174,50 +175,25 @@ window.onload = function () {
                     this.setProgressBar();
                 }
             },
-            getDataUrlFromArrayBuffer: function (arrayBuffer) {
-                // Obtain a blob: URL for the image data.
-                var arrayBufferView = new Uint8Array(arrayBuffer);
-                var blob = new Blob([arrayBufferView], {
-                    type: 'image/jpeg'
-                });
-                var urlCreator = window.URL || window.webkitURL;
-                return urlCreator.createObjectURL(blob);
-            },
-            updateCover: function (cover) {
-                var dataUrl = cover ? this.getDataUrlFromArrayBuffer(cover.data) : 'icons/no-cover.svg';
-                this.song.cover = dataUrl;
-                this.getColorPaletteFromCover();
-            },
             getColorPaletteFromCover: function () {
                 this.dynamicStyles = '';
-                var img = document.querySelector('.gradient-overlay img');
+                var img = document.querySelector('.cover-blur');
                 img.onload = () => {
-                    // this.notify('info', 'cover image loaded');
-                    var target = document.querySelectorAll('.gradient-overlay'); // why querySelectorAll
-                    target[0].style = '';
-                    if (!target.length) {
-                        this.notify('warning', 'no target to apply Grade');
-                        return;
-                    }
-                    Grade(target);
-                    // flatten Grade applied style
-                    target[0].setAttribute('style', target[0].getAttribute('style').replace(/\n|\s+/g, ''));
-                    // get the colors
-                    var colors = target[0].style.backgroundImage.match(/(rgb\([\d]+,\s[\d]+,\s[\d]+\))/g); // to use [0] ?
-                    if (!colors || colors.length !== 2) {
-                        this.notify('warning', 'no colors retrieved from Grade');
-                        return;
-                    }
-                    // this.notify('Grade', 'got colors from cover : "' + colors[0] + '" & "' + colors[1] + '"');
-                    this.colors.primary = colors[0];
-                    this.colors.secondary = colors[1];
-                    this.dynamicStyles = '<style>';
-                    this.dynamicStyles += '.color-primary { color: ' + this.colors.primary + '}';
-                    this.dynamicStyles += '.color-secondary { color: ' + this.colors.secondary + '}';
-                    this.dynamicStyles += '.stroke-primary { stroke: ' + this.colors.primary + '}';
-                    this.dynamicStyles += '.stroke-secondary { stroke: ' + this.colors.secondary + '}';
-                    this.dynamicStyles += '</style>';
+                    var colorThief = new ColorThief();
+                    var palette = colorThief.getPalette(img, 2);
+                    this.colors.primary = 'rgb(' + palette[0].join(',') + ')';
+                    this.colors.secondary = 'rgb(' + palette[1].join(',') + ')';
+                    this.colors.bonus = 'rgb(' + palette[2].join(',') + ')';
+                    this.updateDynamicStyles();
                 };
+            },
+            updateDynamicStyles: function () {
+                this.dynamicStyles = '<style>';
+                this.dynamicStyles += '.color-primary { color: ' + this.colors.primary + '}';
+                this.dynamicStyles += '.color-secondary { color: ' + this.colors.secondary + '}';
+                this.dynamicStyles += '.stroke-primary { stroke: ' + this.colors.primary + '}';
+                this.dynamicStyles += '.stroke-secondary { stroke: ' + this.colors.secondary + '}';
+                this.dynamicStyles += '</style>';
             },
             updateStatus: function (event) {
                 if (this.options.audioClientSide) {
@@ -242,7 +218,7 @@ window.onload = function () {
                 this.progressBarStyle.transitionDuration = '0s';
                 this.progressBarStyle.transform = 'translateX(-100%)';
             },
-            setProgressBar: function (from) {
+            setProgressBar: function () {
                 // this.notify('Info', 'in setProgressBar from "' + from + '"');
                 var secondsLeft = this.getSecondsLeft();
                 var secondsPassed = this.song.duration - secondsLeft;

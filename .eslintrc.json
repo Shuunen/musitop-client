@@ -8,8 +8,7 @@
     "globals": {
         "io": false,
         "Vue": false,
-        "Grade": false,
-        "Notyf": false
+        "ColorThief": false
     },
     "extends": "eslint:recommended",
     "rules": {
