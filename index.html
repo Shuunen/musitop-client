@@ -74,11 +74,12 @@
         .player.visible {
             opacity: 1;
         }
-
+        /*
         .desktop .player {
             transition: color .3s;
             -webkit-box-reflect: below -7px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent), to(rgba(250, 250, 250, 0.2)));
         }
+        */
 
         .cover-wrap {
             z-index: 30;
@@ -123,12 +124,11 @@
         .cover-blur {
             left: -40px;
             top: -40px;
-            filter: blur(20px) brightness(140%) invert(10%);
             min-height: calc(100% + 80px);
             min-width: calc(100% + 80px);
             position: absolute;
             z-index: 0;
-            animation: background-cover-move 30s linear infinite;
+            animation: background-cover-move 60s linear infinite;
             animation-direction: alternate;
         }
 
@@ -581,7 +581,7 @@
             <div class="gradient-overlay absolute-full">
                 <img v-bind:src="song.cover" alt="song cover for background">
             </div>
-            <img class="cover-blur" v-bind:src="song.cover" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
+            <img class="cover-blur" v-bind:src="song.coverBlur" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
             />
             <div class="player" v-bind:class="{ visible: isConnected }">
                 <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">

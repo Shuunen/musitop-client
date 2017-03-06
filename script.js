@@ -112,6 +112,7 @@ window.onload = function () {
                 this.song.waitingForNext = false;
                 this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
                 this.song.cover = 'cover.jpg' + '?t=' + metadata.uid;
+                this.song.coverBlur = 'cover-blurry.jpg' + '?t=' + metadata.uid;
                 this.getColorPaletteFromCover();
                 this.resetProgressBar();
                 this.setPlayerSource();
