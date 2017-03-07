@@ -74,30 +74,11 @@
         .player.visible {
             opacity: 1;
         }
-        /*
-        .desktop .player {
-            transition: color .3s;
-            -webkit-box-reflect: below -7px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent), to(rgba(250, 250, 250, 0.2)));
-        }
-        */
 
         .cover-wrap {
             z-index: 30;
             overflow: hidden;
             border-radius: 20px;
-        }
-
-        .cover-wrap img {
-            filter: grayscale(0) blur(0);
-            will-change: filter;
-        }
-
-        .desktop .cover-wrap img {
-            transition: filter 0.3s;
-        }
-
-        .cover-wrap.blur img {
-            filter: grayscale(1) blur(10px);
         }
 
         .cover {
@@ -128,6 +109,7 @@
             min-width: calc(100% + 80px);
             position: absolute;
             z-index: 0;
+            opacity: 0.7;
             animation: background-cover-move 60s linear infinite;
             animation-direction: alternate;
         }
@@ -512,6 +494,17 @@
             background: white;
             cursor: pointer;
         }
+
+        .player-cover {
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity .3s;
+            will-change: opacity;
+        }
+
+        .player-cover.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -584,8 +577,7 @@
             <img class="cover-blur" v-bind:src="song.coverBlur" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
             />
             <div class="player" v-bind:class="{ visible: isConnected }">
-                <div class="cover-wrap absolute-full" v-bind:class="{ blur: isLoading || (options.audioClientSide && !isPlaying && !isLoading) }">
-                    <img class="cover" v-bind:src="song.cover" alt="song cover" />
+                <div class="player-cover cover-background absolute-full" v-bind:class="{ visible: !isLoading }">
                 </div>
                 <div class="player-top">
                     <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
@@ -654,7 +646,6 @@ secondsLeft : <span v-html="getSecondsLeft()"></span> seconds
     </div>
     <!-- scripts -->
     <script src="vendors/socket-io-slim_171.js"></script>
-    <script src="vendors/color-thief_200.js" async></script>
     <script src="vendors/vue_211.js"></script>
     <script src="script.js"></script>
 </body>

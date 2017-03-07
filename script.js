@@ -89,6 +89,7 @@ window.onload = function () {
                 this.notify('Socket', 'client side connecting...');
                 this.socket = io(this.options.endpoint.address + ':' + this.options.endpoint.port);
                 this.socket.on('metadata', this.onMetadata);
+                this.socket.on('palette', this.onPalette);
                 this.socket.on('music was', this.onMusicWas);
                 this.socket.on('options', this.onOptions);
                 this.socket.on('error', this.onError);
@@ -102,7 +103,7 @@ window.onload = function () {
                     return;
                 }
                 this.notify('Socket', 'received fresh metadata infos');
-                this.notify('info', metadata);
+                // this.notify('info', metadata);
                 this.song.uid = metadata.uid;
                 this.song.artist = metadata.albumartist[0];
                 this.song.title = metadata.title;
@@ -113,9 +114,21 @@ window.onload = function () {
                 this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
                 this.song.cover = 'cover.jpg' + '?t=' + metadata.uid;
                 this.song.coverBlur = 'cover-blurry.jpg' + '?t=' + metadata.uid;
-                this.getColorPaletteFromCover();
                 this.resetProgressBar();
                 this.setPlayerSource();
+                this.updateDynamicStyles();
+            },
+            onPalette: function (palette) {
+                if (!palette || !palette.Vibrant || !palette.Vibrant._rgb) {
+                    this.notify('warn', 'no palette received :(');
+                    this.colors.primary = 'black';
+                    this.colors.secondary = 'snow';
+                } else {
+                    this.notify('Socket', 'received fresh palette');
+                    this.colors.primary = 'rgb(' + palette.Vibrant._rgb.join(',') + ')';
+                    this.colors.secondary = 'rgb(' + palette.LightVibrant._rgb.join(',') + ')';
+                    this.colors.bonus = 'rgb(' + palette.LightMuted._rgb.join(',') + ')';
+                }
             },
             onMusicWas: function (musicWas) {
                 this.notify('Client', 'Server said that music was "' + musicWas + '"');
@@ -176,24 +189,13 @@ window.onload = function () {
                     this.setProgressBar();
                 }
             },
-            getColorPaletteFromCover: function () {
-                this.dynamicStyles = '';
-                var img = document.querySelector('.cover-blur');
-                img.onload = () => {
-                    var colorThief = new ColorThief();
-                    var palette = colorThief.getPalette(img, 2);
-                    this.colors.primary = 'rgb(' + palette[0].join(',') + ')';
-                    this.colors.secondary = 'rgb(' + palette[1].join(',') + ')';
-                    this.colors.bonus = 'rgb(' + palette[2].join(',') + ')';
-                    this.updateDynamicStyles();
-                };
-            },
             updateDynamicStyles: function () {
                 this.dynamicStyles = '<style>';
                 this.dynamicStyles += '.color-primary { color: ' + this.colors.primary + '}';
                 this.dynamicStyles += '.color-secondary { color: ' + this.colors.secondary + '}';
                 this.dynamicStyles += '.stroke-primary { stroke: ' + this.colors.primary + '}';
                 this.dynamicStyles += '.stroke-secondary { stroke: ' + this.colors.secondary + '}';
+                this.dynamicStyles += '.cover-background { background-image: url(' + this.song.cover + ')}';
                 this.dynamicStyles += '</style>';
             },
             updateStatus: function (event) {
