@@ -111,22 +111,25 @@ window.onload = function () {
                 this.song.canPlay = false;
                 this.song.hasBeenMarked = false;
                 this.song.waitingForNext = false;
-                this.song.stream = this.options.endpoint.address + ':' + this.options.endpoint.port + metadata.stream + '?t=' + metadata.uid;
-                this.song.cover = 'cover.jpg' + '?t=' + metadata.uid;
-                this.song.coverBlur = 'cover-blurry.jpg' + '?t=' + metadata.uid;
+                this.song.stream = this.getEndpointUrl() + metadata.stream + '?t=' + metadata.uid;
+                this.song.cover = this.getEndpointUrl() + '/cover.jpg' + '?t=' + metadata.uid;
+                this.song.coverBlur = this.getEndpointUrl() + '/cover-blurry.jpg' + '?t=' + metadata.uid;
                 this.resetProgressBar();
                 this.setPlayerSource();
                 this.updateDynamicStyles();
             },
             onPalette: function (palette) {
-                if (!palette || !palette.Vibrant || !palette.Vibrant._rgb) {
-                    this.notify('warn', 'no palette received :(');
-                    this.colors.primary = 'black';
-                    this.colors.secondary = 'snow';
-                } else {
-                    this.notify('Socket', 'received fresh palette');
+                if (palette && palette.Vibrant && palette.Vibrant._rgb) {
                     this.colors.primary = 'rgb(' + palette.Vibrant._rgb.join(',') + ')';
+                } else {
+                    this.colors.primary = 'black';
+                }
+                if (palette && palette.LightVibrant && palette.LightVibrant._rgb) {
                     this.colors.secondary = 'rgb(' + palette.LightVibrant._rgb.join(',') + ')';
+                } else {
+                    this.colors.secondary = 'snow';
+                }
+                if (palette && palette.LightMuted && palette.LightMuted._rgb) {
                     this.colors.bonus = 'rgb(' + palette.LightMuted._rgb.join(',') + ')';
                 }
             },
@@ -176,6 +179,31 @@ window.onload = function () {
                 // to get options only once
                 this.options.canUpdate = false;
             },
+            setStorage: function () {
+                this.notify('Storage', 'setStorage');
+                localStorage.musitop = JSON.stringify({
+                    endpoint: this.options.endpoint,
+                    doSoundNotifications: this.options.doSoundNotifications,
+                    doToastNotifications: this.options.doToastNotifications,
+                    doAutoplay: this.options.doAutoplay,
+                    debugActive: this.options.debugActive
+                });
+            },
+            getStorage: function () {
+                this.notify('Storage', 'getStorage');
+                try {
+                    var data = JSON.parse(localStorage.musitop);
+                    this.options.endpoint = data.endpoint;
+                    this.updateEndpointAddress();
+                    this.options.doSoundNotifications = data.doSoundNotifications;
+                    this.options.doToastNotifications = data.doToastNotifications;
+                    this.options.doAutoplay = data.doAutoplay;
+                    this.options.debugActive = data.debugActive;
+                } catch (error) {
+                    this.notify('Storage', 'nothing to get from storage');
+                    this.guessDefaultEndpoint();
+                }
+            },
             setPlayerSource: function () {
                 if (this.options.audioClientSide) {
                     if (this.player.src != this.song.stream) {
@@ -188,6 +216,9 @@ window.onload = function () {
                     this.isLoading = false;
                     this.setProgressBar();
                 }
+            },
+            getEndpointUrl: function () {
+                return this.options.endpoint.address + ':' + this.options.endpoint.port;
             },
             updateDynamicStyles: function () {
                 this.dynamicStyles = '<style>';
@@ -399,6 +430,7 @@ window.onload = function () {
                 var doPointToHttps = this.options.endpoint.address.indexOf('https') !== -1;
                 this.options.endpoint.port = doPointToHttps ? 1444 : 1404;
                 this.initSocket();
+                this.setStorage();
             },
             guessDefaultEndpoint: function () {
 
@@ -417,7 +449,11 @@ window.onload = function () {
                 this.updateEndpointAddress();
             },
             getSecondsLeft: function () {
-                return Math.round(this.song.duration - this.player.currentTime);
+                try {
+                    return Math.round(this.song.duration - this.player.currentTime);
+                } catch (error) {
+                    return 0;
+                }
             },
             getJson: function (url, success) {
                 var request = new XMLHttpRequest();
@@ -433,6 +469,8 @@ window.onload = function () {
                 request.onerror = () => {
                     this.notify('Error', 'GET ' + url + ' failed', 'alert');
                 };
+                url = this.getEndpointUrl() + url;
+                // this.notify('info', 'will get json from "' + url + '"');
                 request.open('get', url, true);
                 request.send();
             },
@@ -478,7 +516,7 @@ window.onload = function () {
         },
         mounted() {
             this.notify('info', this.app.name + ' init');
-            this.guessDefaultEndpoint();
+            this.getStorage();
             this.initKeyboard();
             this.initServiceWorker();
             setInterval(this.cron, 1000);

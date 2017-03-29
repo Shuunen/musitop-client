@@ -1,0 +1,25 @@
+{
+    "name": "musitop-client",
+    "version": "2.1.0",
+    "description": "A web client for Musitop",
+    "main": "index.html",
+    "scripts": {
+        "start": "http-server -o"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Shuunen/musitop-client.git"
+    },
+    "keywords": [
+        "music",
+        "player",
+        "vue",
+        "vuejs"
+    ],
+    "author": "Shuunen",
+    "license": "AGPL-3.0",
+    "bugs": {
+        "url": "https://github.com/Shuunen/musitop-client/issues"
+    },
+    "homepage": "https://github.com/Shuunen/musitop-client#readme"
+}

@@ -16,7 +16,7 @@
             margin: 0;
             overflow: hidden;
         }
-
+        
         #app {
             font-family: sans-serif;
             font-size: 20px;
@@ -30,7 +30,7 @@
             height: 100%;
             box-shadow: inset 2px 2px 40px #333;
         }
-
+        
         .absolute-full {
             position: absolute;
             top: 0;
@@ -39,16 +39,16 @@
             height: 100%;
             pointer-events: none;
         }
-
+        
         .gradient-overlay {
             z-index: 20;
             opacity: 0.5;
         }
-
+        
         .gradient-overlay img {
             display: none;
         }
-
+        
         .player {
             display: flex;
             flex-direction: column;
@@ -70,17 +70,17 @@
             transition: opacity .3s;
             will-change: opacity;
         }
-
+        
         .player.visible {
             opacity: 1;
         }
-
+        
         .cover-wrap {
             z-index: 30;
             overflow: hidden;
             border-radius: 20px;
         }
-
+        
         .cover {
             height: 110%;
             width: 110%;
@@ -89,7 +89,7 @@
             top: -5%;
             object-fit: cover;
         }
-
+        
         @keyframes background-cover-move {
             0% {
                 transform: scale(1) rotate(0) translate(0, 0);
@@ -101,7 +101,7 @@
                 transform: scale(1) rotate(0) translate(20px, 20px);
             }
         }
-
+        
         .cover-blur {
             left: -40px;
             top: -40px;
@@ -113,24 +113,24 @@
             animation: background-cover-move 60s linear infinite;
             animation-direction: alternate;
         }
-
+        
         .inside-shadow {
             box-shadow: inset 0 0 20vw #333;
             z-index: 20;
             pointer-events: none;
         }
-
+        
         .player .bottom.artist {
             font-size: 30px;
             bottom: 40px;
             text-indent: 5px;
         }
-
+        
         .player .bottom.title {
             text-indent: 4px;
             letter-spacing: -2px;
         }
-
+        
         .player .title,
         .player .artist {
             text-shadow: 1px 1px 1px black, 0 0 4px white;
@@ -141,28 +141,28 @@
             overflow: hidden;
             text-align: left;
         }
-
+        
         .top,
         .bottom {
             position: absolute;
         }
-
+        
         .top {
             top: 20px;
         }
-
+        
         .right {
             right: 20px;
         }
-
+        
         .bottom {
             bottom: 20px;
         }
-
+        
         .left {
             left: 20px;
         }
-
+        
         .player .player-center {
             position: absolute;
             top: calc(50% - 50px);
@@ -171,28 +171,28 @@
             width: 100px;
             z-index: 40;
         }
-
+        
         .player .player-center>div {
             position: absolute;
         }
-
+        
         .player .player-center>.icon {
             height: 100%;
             width: 100%;
         }
-
+        
         .player-inner-gradient {
             z-index: 30;
             border-radius: 20px;
             box-shadow: inset 0px 10px 120px 0 #222, inset 0px -40px 150px 10px #222;
         }
-
+        
         .player-border {
             box-shadow: inset 1px 3px 8px white;
             z-index: 40;
             border-radius: 20px;
         }
-
+        
         .progress-bar-wrapper {
             position: absolute;
             bottom: -10px;
@@ -201,7 +201,7 @@
             left: 0;
             overflow: hidden;
         }
-
+        
         .progress-bar {
             position: relative;
             height: 6px;
@@ -214,7 +214,7 @@
             overflow: hidden;
             cursor: pointer;
         }
-
+        
         .progress-bar-inner {
             background: currentColor;
             width: 100%;
@@ -225,7 +225,7 @@
             transition-duration: 60s;
             transition-timing-function: ease-in-out;
         }
-
+        
         footer {
             position: absolute;
             left: 0;
@@ -235,7 +235,7 @@
             height: 500px;
             background: rgba(255, 0, 0, 0.3);
         }
-
+        
         .icon {
             height: 40px;
             width: 40px;
@@ -246,30 +246,30 @@
             filter: drop-shadow(2px 2px 3px #222) drop-shadow(0px 0px 15px white);
             outline: none;
         }
-
+        
         .desktop .icon {
             cursor: pointer;
         }
-
+        
         audio {
             display: none;
             position: absolute;
             bottom: 0;
             z-index: 100;
         }
-
+        
         .fade-enter-active,
         .fade-leave-active {
             transition: opacity .3s;
             will-change: opacity;
         }
-
+        
         .fade-enter,
         .fade-leave-to {
             opacity: 0;
             will-change: opacity;
         }
-
+        
         .spinner {
             z-index: 100;
             position: relative;
@@ -286,7 +286,7 @@
             border-bottom: solid 6px transparent;
             border-left: solid 6px currentColor;
         }
-
+        
         @keyframes spinner-animate {
             0% {
                 transform: rotate(0);
@@ -300,7 +300,7 @@
                 opacity: 1
             }
         }
-
+        
         #logo {
             position: absolute;
             bottom: 0;
@@ -308,7 +308,7 @@
             width: 300px;
             max-height: 20vh;
         }
-
+        
         .toasts {
             display: flex;
             flex-direction: column;
@@ -322,7 +322,7 @@
             max-width: 300px;
             z-index: 40;
         }
-
+        
         .toast {
             display: flex;
             flex-direction: column;
@@ -337,15 +337,15 @@
             transition: opacity .5s;
             will-change: opacity;
         }
-
+        
         .toast strong {
             margin: 6px 0;
         }
-
+        
         .toast p {
             margin: 2px 0 6px;
         }
-
+        
         .toast strong,
         .toast p {
             white-space: nowrap;
@@ -353,23 +353,23 @@
             overflow: hidden;
             width: 100%;
         }
-
+        
         .toast.visible {
             opacity: 1;
         }
-
+        
         .toast.success {
             background: #62a262;
         }
-
+        
         .toast.info {
             background: #23809e;
         }
-
+        
         .toast.alert {
             background: #9a4653;
         }
-
+        
         pre {
             position: absolute;
             font-size: 15px;
@@ -384,15 +384,15 @@
             line-height: 18px;
             opacity: 0;
         }
-
+        
         pre.visible {
             opacity: 1;
         }
-
+        
         pre strong {
             color: green;
         }
-
+        
         .options-modal-toggle {
             z-index: 40;
             height: 40px;
@@ -400,25 +400,25 @@
             transition: transform 1s;
             will-change: transform;
         }
-
+        
         .options-modal-toggle.opened {
             transform: rotate(360deg);
         }
-
+        
         .options-modal-toggle.centered {
             height: 100px;
             width: 100px;
             top: calc(50% - 50px);
             right: calc(50% - 50px);
         }
-
+        
         .options-modal-toggle.opened.centered {
             top: 20px;
             right: 20px;
             height: 40px;
             width: 40px;
         }
-
+        
         .options-modal {
             display: flex;
             justify-content: center;
@@ -430,12 +430,12 @@
             transition: opacity .5s;
             will-change: opacity;
         }
-
+        
         .options-modal.opened {
             opacity: 1;
             pointer-events: inherit;
         }
-
+        
         .option-line {
             display: flex;
             flex-wrap: wrap;
@@ -450,43 +450,43 @@
             transition: opacity .2s, transform .3s;
             will-change: opacity, transform;
         }
-
-        .option-line > span {
+        
+        .option-line>span {
             display: flex;
             align-items: center;
         }
-
+        
         .option-line.title {
             justify-content: center;
             font-size: 2em;
             margin-bottom: 40px;
         }
-
+        
         .option-line.disabled {
             transform: skewX(-20deg);
             opacity: 0.5;
         }
-
+        
         input[type="text"] {
             padding: 4px 8px;
             border: none;
             border-radius: 3px;
             width: 125px;
         }
-
+        
         input[type="text"].endpoint-port {
             width: 28px;
             padding: 4px 6px;
             text-indent: -1px;
         }
-
+        
         input[type="checkbox"] {
             cursor: pointer;
             width: 16px;
             height: 16px;
             margin: 0;
         }
-
+        
         input[type="button"] {
             border: none;
             padding: 5px 10px;
@@ -494,17 +494,18 @@
             background: white;
             cursor: pointer;
         }
-
+        
         .player-cover {
             border-radius: 20px;
             opacity: 0;
             transition: opacity .3s;
             will-change: opacity;
         }
-
+        
         .player-cover.visible {
             opacity: 1;
         }
+
     </style>
 </head>
 
@@ -513,10 +514,10 @@
         <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
             v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
-            </svg>
-            <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
-                <div class="title option-line">Options</div>
-                <label class="option-line">
+        </svg>
+        <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
+            <div class="title option-line">Options</div>
+            <label class="option-line">
                     <span>Server endpoint</span>
                     <span>
                         <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">
@@ -524,45 +525,45 @@
                         <input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
                     </span>
                 </label>
-                <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
+            <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
                     <span>Sound notifications</span>
                     <span>
-                        <input type="checkbox" v-model="options.doSoundNotifications">
+                        <input type="checkbox" v-model="options.doSoundNotifications" v-on:change="setStorage">
                         &nbsp;&nbsp;
                         {{ options.doSoundNotifications ? 'enabled' : 'disabled' }}
                     </span>
                 </label>
-                <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
+            <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
                     <span>Toast notifications</span>
                     <span>
-                        <input type="checkbox" v-model="options.doToastNotifications">
+                        <input type="checkbox" v-model="options.doToastNotifications" v-on:change="setStorage">
                         &nbsp;&nbsp;
                         {{ options.doToastNotifications ? 'enabled' : 'disabled' }}
                     </span>
                 </label>
-                <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
+            <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
                     <span>Autoplay music</span>
                     <span>
-                        <input type="checkbox" v-model="options.doAutoplay">
+                        <input type="checkbox" v-model="options.doAutoplay" v-on:change="setStorage">
                         &nbsp;&nbsp;
                         {{ options.doAutoplay ? 'enabled' : 'disabled' }}
                     </span>
                 </label>
-                <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
+            <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
                     <span>Debug panel</span>
                     <span>
-                        <input type="checkbox" v-model="options.debugActive">
+                        <input type="checkbox" v-model="options.debugActive" v-on:change="setStorage">
                         &nbsp;&nbsp;
                         {{ options.debugActive ? 'enabled' : 'disabled' }}
                     </span>
                 </label>
-                <label class="option-line">
+            <label class="option-line">
                     <span>Server version {{ server.version }}</span>
                     <span>
                         <input type="button" v-on:click="updateServer" value="check for updates">
                     </span>
                 </label>
-                <label class="option-line">
+            <label class="option-line">
                     <span>Client version {{ app.version }}</span>
                      <span>
                          <input type="button" v-on:click="updateClient" value="check for updates">
@@ -570,68 +571,68 @@
                          <input type="button" v-on:click="restart" value="reload">
                     </span>
                 </label>
+        </div>
+        <div class="gradient-overlay absolute-full">
+            <img v-bind:src="song.cover" alt="song cover for background">
+        </div>
+        <img class="cover-blur" v-bind:src="song.coverBlur" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
+        />
+        <div class="player" v-bind:class="{ visible: isConnected }">
+            <div class="player-cover cover-background absolute-full" v-bind:class="{ visible: !isLoading }">
             </div>
-            <div class="gradient-overlay absolute-full">
-                <img v-bind:src="song.cover" alt="song cover for background">
+            <div class="player-top">
+                <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
+                    <use xlink:href="icons/icons.svg#like"></use>
+                </svg>
+                <svg class="icon top right" v-show="isPaused && !isLoading" v-on:click="pauseResume" viewbox="0 0 128 128">
+                    <use xlink:href="icons/icons.svg#run"></use>
+                </svg>
+                <svg class="icon top right" v-on:click="pauseResume" v-show="options.audioClientSide && (isPlaying && !isLoading)" viewbox="0 0 128 128">
+                    <use xlink:href="icons/icons.svg#pause"></use>
+                </svg>
             </div>
-            <img class="cover-blur" v-bind:src="song.coverBlur" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
-            />
-            <div class="player" v-bind:class="{ visible: isConnected }">
-                <div class="player-cover cover-background absolute-full" v-bind:class="{ visible: !isLoading }">
-                </div>
-                <div class="player-top">
-                    <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
-                        <use xlink:href="icons/icons.svg#like"></use>
-                    </svg>
-                    <svg class="icon top right" v-show="isPaused && !isLoading" v-on:click="pauseResume" viewbox="0 0 128 128">
-                        <use xlink:href="icons/icons.svg#run"></use>
-                    </svg>
-                    <svg class="icon top right" v-on:click="pauseResume" v-show="options.audioClientSide && (isPlaying && !isLoading)" viewbox="0 0 128 128">
-                        <use xlink:href="icons/icons.svg#pause"></use>
-                    </svg>
-                </div>
-                <div class="player-center">
-                    <svg v-show="!isLoading" v-on:click="nextSong" class="icon" viewbox="0 0 128 128">
-                        <use xlink:href="icons/icons.svg#right"></use>
-                    </svg>
-                    <div v-show="isLoading" class="spinner"></div>
-                </div>
-                <div class="player-bottom">
-                    <strong class="artist bottom left">{{ song.artist }}</strong>
-                    <!-- space to help when copying artist & title -->
-                    <span> </span>
-                    <div class="title bottom left">{{ song.title }}</div>
-                    <svg class="icon icon-dislike bottom right" v-on:click="musicIs('bad')" viewbox="0 0 24 24">
-                        <use xlink:href="icons/icons.svg#unlike-2"></use>
-                    </svg>
-                </div>
-                <div class="player-inner-gradient absolute-full"></div>
-                <div class="player-border absolute-full"></div>
-                <div class="progress-bar-wrapper" v-show="isPlaying">
-                    <div class="progress-bar color-primary" v-on:click="musicJumpTo">
-                        <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
-                    </div>
+            <div class="player-center">
+                <svg v-show="!isLoading" v-on:click="nextSong" class="icon" viewbox="0 0 128 128">
+                    <use xlink:href="icons/icons.svg#right"></use>
+                </svg>
+                <div v-show="isLoading" class="spinner"></div>
+            </div>
+            <div class="player-bottom">
+                <strong class="artist bottom left">{{ song.artist }}</strong>
+                <!-- space to help when copying artist & title -->
+                <span> </span>
+                <div class="title bottom left">{{ song.title }}</div>
+                <svg class="icon icon-dislike bottom right" v-on:click="musicIs('bad')" viewbox="0 0 24 24">
+                    <use xlink:href="icons/icons.svg#unlike-2"></use>
+                </svg>
+            </div>
+            <div class="player-inner-gradient absolute-full"></div>
+            <div class="player-border absolute-full"></div>
+            <div class="progress-bar-wrapper" v-show="isPlaying">
+                <div class="progress-bar color-primary" v-on:click="musicJumpTo">
+                    <div class="progress-bar-inner" v-bind:style="progressBarStyle"></div>
                 </div>
             </div>
-            <audio controls>
-                <source type="audio/mpeg"> Your browser does not support the audio element.
-            </audio>
-            <div class="inside-shadow absolute-full"></div>
-            <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
-                <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
-                <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
-                <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
-                <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
-                <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
-                <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
-            </svg>
-            <div class="toasts">
-                <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
-            </div>
-            <!-- dynamic styles -->
-            <div v-html="dynamicStyles"></div>
-            <!-- debug vars -->
-            <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
+        </div>
+        <audio controls>
+            <source type="audio/mpeg"> Your browser does not support the audio element.
+        </audio>
+        <div class="inside-shadow absolute-full"></div>
+        <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
+            <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
+            <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
+            <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
+            <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
+            <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
+            <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
+        </svg>
+        <div class="toasts">
+            <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
+        </div>
+        <!-- dynamic styles -->
+        <div v-html="dynamicStyles"></div>
+        <!-- debug vars -->
+        <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
 web id : {{ getWebId() }}
 isConnected ? <span v-html="isConnected ? '<strong>YES</strong>':'no'"></span>
 audioClientSide ? <span v-html="options.audioClientSide ? '<strong>YES</strong>':'no'"></span>

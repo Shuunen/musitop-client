@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="pattern-0" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" viewBox="0 0 100 100">
+      <path d="M 0 0 L 50 0 L 50 100 L 0 100 Z" style="fill: black;"/>
+    </pattern>
+    <radialGradient id="gradient-0" gradientUnits="userSpaceOnUse" cx="255.339" cy="190.959" r="161.735" gradientTransform="matrix(1, 0, 0, 1, -5.338972, 59.040985)">
+      <stop offset="0" style="stop-color: #bada55"/>
+      <stop offset="1" style="stop-color: #758d29"/>
+    </radialGradient>
+    <radialGradient id="gradient-10" gradientUnits="userSpaceOnUse" cx="262.121" cy="202.71" r="152.368" gradientTransform="matrix(1.359645, -0.010305, 0.008458, 0.926694, -107.539869, 77.365487)" spreadMethod="pad">
+      <stop offset="0"/>
+      <stop offset="1" style="stop-color: rgba(0, 0, 0, 0);"/>
+    </radialGradient>
+    <radialGradient id="gradient-1" gradientUnits="userSpaceOnUse" cx="262.121" cy="202.71" r="152.368" gradientTransform="matrix(0.124295, -0.006992, 0.000773, 0.628676, 62.102246, 126.717576)" spreadMethod="pad">
+      <stop offset="0"/>
+      <stop offset="1" style="stop-color: rgba(0, 0, 0, 0);"/>
+    </radialGradient>
+    <radialGradient id="gradient-2" gradientUnits="userSpaceOnUse" cx="262.121" cy="202.71" r="152.368" gradientTransform="matrix(0.15152, -0.008318, 0.000942, 0.74802, 375.864631, 104.132849)" spreadMethod="pad">
+      <stop offset="0"/>
+      <stop offset="1" style="stop-color: rgba(0, 0, 0, 0);"/>
+    </radialGradient>
+    <radialGradient id="gradient-3" gradientUnits="userSpaceOnUse" cx="262.121" cy="202.71" r="152.368" gradientTransform="matrix(1.148652, -0.001405, 0.007143, 0.126305, -49.722795, 332.108052)" spreadMethod="pad">
+      <stop offset="0"/>
+      <stop offset="1" style="stop-color: rgba(0, 0, 0, 0);"/>
+    </radialGradient>
+	 <filter id="gaussian1" x="0" y="0">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
+    </filter>
+  </defs>
+  <ellipse cx="246.871" cy="260.012" rx="250" ry="204.305" style="fill: url(#gradient-10);"/>
+  <ellipse cx="94.501" cy="250.627" rx="22.854" ry="138.602" style="fill: url(#gradient-1);"/>
+  <ellipse cx="415.362" cy="251.563" rx="27.861" ry="143.295" style="fill: url(#gradient-2);"/>
+  <ellipse cx="249.688" cy="357.004" rx="211.202" ry="27.847" style="fill: url(#gradient-3);"/>
+  <rect width="317.214" height="189.066" style="stroke-linejoin: round; fill: none; stroke-width: 25; stroke: rgb(74, 74, 74);" y="160.044" x="93.534"/>
+  <rect x="88.265" y="154.215" width="323.47" height="191.57" style="stroke: rgb(0, 0, 0); fill: url(#gradient-0); stroke-linejoin: round; stroke-width: 15;"/>
+  <rect x="56.978" y="141.7" width="371.652" height="230.366" filter="url(#f1)" fill="black" style="stroke-linejoin: round; stroke-width: 15;"/>
+</svg>
