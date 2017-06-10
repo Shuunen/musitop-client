@@ -28,6 +28,7 @@ window.onload = function () {
             isLoading: true,
             isPaused: true,
             isPlaying: false,
+            avoidNextSound: false,
             sounds: {
                 notification: [new Audio('sounds/notification.mp3')],
                 ok: [new Audio('sounds/robot-ok-01.mp3'), new Audio('sounds/male-ok-01.mp3'), new Audio('sounds/male-ok-02.mp3'), new Audio('sounds/female-ok-01.mp3'), new Audio('sounds/female-ok-02.mp3'), new Audio('sounds/female-ok-03.mp3')]
@@ -333,6 +334,7 @@ window.onload = function () {
                 this.socket.emit('music is', musicIs)
             },
             nextSong: function (event) {
+                this.avoidNextSound = true
                 this.musicIs('next')
                 this.socket.emit('event', 'next asked from ' + this.getWebId() + ' because of ' + event.type)
             },
@@ -363,10 +365,14 @@ window.onload = function () {
                     }
                 }
                 if (withSound && this.options.doSoundNotifications) {
-                    if (action.indexOf('keep') !== -1 || message.indexOf('next') !== -1) {
-                        this.playSound('ok')
+                    if (this.avoidNextSound) {
+                        this.avoidNextSound = false
                     } else {
-                        this.playSound('notification')
+                        if (action.indexOf('keep') !== -1 || message.indexOf('next') !== -1) {
+                            this.playSound('ok')
+                        } else {
+                            this.playSound('notification')
+                        }
                     }
                 }
                 if (console[action.toLowerCase()]) {
