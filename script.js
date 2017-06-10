@@ -30,7 +30,7 @@ window.onload = function () {
             isPlaying: false,
             sounds: {
                 notification: [new Audio('sounds/notification.mp3')],
-                ok: [new Audio('sounds/male-ok.mp3'), new Audio('sounds/female-ok-01.mp3'), new Audio('sounds/female-ok-02.mp3'), new Audio('sounds/female-ok-03.mp3')]
+                ok: [new Audio('sounds/robot-ok-01.mp3'), new Audio('sounds/male-ok-01.mp3'), new Audio('sounds/male-ok-02.mp3'), new Audio('sounds/female-ok-01.mp3'), new Audio('sounds/female-ok-02.mp3'), new Audio('sounds/female-ok-03.mp3')]
             },
             progressBarStyle: {
                 transitionDuration: '0s',
