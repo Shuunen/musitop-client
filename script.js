@@ -42,6 +42,7 @@ window.onload = function () {
             song: {
                 uid: 666,
                 artist: '',
+                album: '',
                 title: '',
                 duration: 0,
                 hasBeenMarked: false,
@@ -108,37 +109,44 @@ window.onload = function () {
                 // this.notify('info', metadata);
                 this.song.uid = metadata.uid
                 this.song.artist = metadata.albumartist[0]
-                this.song.title = metadata.title
+                this.song.artist = metadata.albumartist[0]
+                this.song.album = metadata.album
                 this.song.duration = Math.round(metadata.duration)
                 this.song.canPlay = false
                 this.song.hasBeenMarked = false
                 this.song.waitingForNext = false
-                this.song.stream = this.getEndpointUrl() + metadata.stream + '?t=' + metadata.uid
-                this.song.cover = this.getEndpointUrl() + '/cover.jpg' + '?t=' + metadata.uid
-                this.song.coverBlur = this.getEndpointUrl() + '/cover-blurry.jpg' + '?t=' + metadata.uid
+                this.song.stream = this.urlTimestamped(metadata.stream)
+                this.song.cover = this.urlTimestamped('/cover.jpg')
+                this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
+                this.handleMediaSession()
+                this.resetProgressBar()
+                this.setPlayerSource()
+                this.updateDynamicStyles()
+            },
+            urlTimestamped(url) {
+                return this.getEndpointUrl() + url + '?t=' + this.song.uid
+            },
+            handleMediaSession() {
                 if ('mediaSession' in navigator) {
                     navigator.mediaSession.metadata = new MediaMetadata({
                         title: this.song.title,
                         artist: this.song.artist,
-                        album: metadata.album,
-                        /*
+                        album: this.song.album,
                         artwork: [
+                            /*
                             { src: 'https://dummyimage.com/96x96', sizes: '96x96', type: 'image/png' },
                             { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
                             { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
-                            { src: 'https://dummyimage.com/256x256', sizes: '256x256', type: 'image/png' },
                             { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-                            { src: 'https://dummyimage.com/512x512', sizes: '512x512', type: 'image/png' },
+                            */
+                            { src: this.urlTimestamped('/cover-256.jpg'), sizes: '256x256', type: 'image/jpeg' },
+                            { src: this.urlTimestamped('/cover-512.jpg'), sizes: '512x512', type: 'image/jpeg' },
                         ]
-                        */
                     })
                     navigator.mediaSession.setActionHandler('play', () => this.pauseResume())
                     navigator.mediaSession.setActionHandler('pause', () => this.pauseResume())
-                    navigator.mediaSession.setActionHandler('nexttrack', () => this.onMusicWas('next'))
+                    navigator.mediaSession.setActionHandler('nexttrack', () => this.nextSong())
                 }
-                this.resetProgressBar()
-                this.setPlayerSource()
-                this.updateDynamicStyles()
             },
             onPalette: function (palette) {
                 if (palette && palette.Vibrant && palette.Vibrant._rgb) {
