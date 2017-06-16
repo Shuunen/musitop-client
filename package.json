@@ -1,6 +1,6 @@
 {
     "name": "musitop-client",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "A web client for Musitop",
     "main": "index.html",
     "scripts": {
