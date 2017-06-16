@@ -8,7 +8,7 @@
     "globals": {
         "io": false,
         "Vue": false,
-        "ColorThief": false
+        "MediaMetadata": false
     },
     "extends": "eslint:recommended",
     "rules": {
