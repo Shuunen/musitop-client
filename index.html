@@ -637,6 +637,7 @@
         <div v-html="dynamicStyles"></div>
         <!-- debug vars -->
         <pre v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }">
+client version : {{ app.version }}
 web id : {{ getWebId() }}
 isConnected ? <span v-html="isConnected ? '<strong>YES</strong>':'no'"></span>
 audioClientSide ? <span v-html="options.audioClientSide ? '<strong>YES</strong>':'no'"></span>
