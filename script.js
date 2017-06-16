@@ -109,7 +109,7 @@ window.onload = function () {
                 // this.notify('info', metadata);
                 this.song.uid = metadata.uid
                 this.song.artist = metadata.albumartist[0]
-                this.song.artist = metadata.albumartist[0]
+                this.song.title = metadata.title
                 this.song.album = metadata.album
                 this.song.duration = Math.round(metadata.duration)
                 this.song.canPlay = false
