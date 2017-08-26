@@ -262,6 +262,10 @@
             z-index: 100;
         }
 
+        audio.preloader {
+            z-index: 0;
+        }
+
         .fade-enter-active,
         .fade-leave-active {
             transition: opacity .3s;
@@ -619,6 +623,9 @@
         </div>
         <audio controls>
             <source type="audio/mpeg"> Your browser does not support the audio element.
+        </audio>
+        <audio class="preloader" controls>
+            <source type="audio/mpeg">
         </audio>
         <div class="inside-shadow absolute-full"></div>
         <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">

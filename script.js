@@ -49,6 +49,7 @@ window.onload = function () {
                 waitingForNext: true,
                 canPlay: false
             },
+            hasStartPreloading: false,
             dynamicStyles: '',
             colors: {
                 primary: 'grey',
@@ -116,8 +117,10 @@ window.onload = function () {
                 this.song.hasBeenMarked = false
                 this.song.waitingForNext = false
                 this.song.stream = metadata.stream
+                this.song.nextStream = metadata.nextStream
                 this.song.cover = this.urlTimestamped('/cover.jpg')
                 this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
+                this.hasStartPreloading = false
                 this.handleMediaSession()
                 this.resetProgressBar()
                 this.setPlayerSource()
@@ -269,6 +272,7 @@ window.onload = function () {
                             // console.debug('player.play (canplay)');
                             this.player.play()
                         }
+                        setTimeout(() => this.preloadNext(), 2000)
                     } else if (!this.isLoading) {
                         this.isPaused = this.player.paused
                         this.isPlaying = !this.player.paused
@@ -277,6 +281,14 @@ window.onload = function () {
                     this.isLoading = false
                 }
                 this.setProgressBar('updateStatus')
+            },
+            preloadNext: function () {
+                if (!this.hasStartPreloading) {
+                    this.notify('info', 'preloading next song...')
+                    let preloader = document.querySelector('audio.preloader')
+                    preloader.src = this.song.nextStream
+                    this.hasStartPreloading = true
+                }
             },
             resetProgressBar: function () {
                 this.progressBarStyle.transitionDuration = '0s'
