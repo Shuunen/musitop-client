@@ -21,5 +21,8 @@
     "bugs": {
         "url": "https://github.com/Shuunen/musitop-client/issues"
     },
-    "homepage": "https://github.com/Shuunen/musitop-client#readme"
+    "homepage": "https://github.com/Shuunen/musitop-client#readme",
+    "dependencies": {
+        "jimp": "^0.2.28"
+    }
 }
