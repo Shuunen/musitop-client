@@ -21,7 +21,7 @@ window.onload = function () {
         data: {
             app: {
                 name: 'Musitop',
-                version: '2.2.1'
+                version: '3.4.0'
             },
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
