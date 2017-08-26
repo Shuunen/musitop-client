@@ -115,7 +115,7 @@ window.onload = function () {
                 this.song.canPlay = false
                 this.song.hasBeenMarked = false
                 this.song.waitingForNext = false
-                this.song.stream = this.urlTimestamped(metadata.stream)
+                this.song.stream = metadata.stream
                 this.song.cover = this.urlTimestamped('/cover.jpg')
                 this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
                 this.handleMediaSession()
