@@ -106,6 +106,7 @@ window.onload = function () {
                 if (!metadata || metadata.uid === this.song.uid) {
                     return
                 }
+                this.notify('info', 'endpoint is ' + this.getEndpointUrl())
                 this.notify('Socket', 'received fresh metadata infos')
                 // this.notify('info', metadata);
                 this.song.uid = metadata.uid
@@ -243,7 +244,7 @@ window.onload = function () {
                         // console.debug('currentTime = 0');
                         this.player.currentTime = 0
                         // console.debug('set player.src');
-                        this.player.src = this.song.stream
+                        this.player.src = this.getEndpointUrl() + this.song.stream
                     }
                 } else {
                     this.isLoading = false
@@ -251,7 +252,8 @@ window.onload = function () {
                 }
             },
             getEndpointUrl: function () {
-                return this.options.endpoint.address + ':' + this.options.endpoint.port
+                let endpoint = this.options.endpoint.address + ':' + this.options.endpoint.port
+                return endpoint
             },
             updateDynamicStyles: function () {
                 this.dynamicStyles = '<style>'
@@ -286,7 +288,7 @@ window.onload = function () {
                 if (!this.hasStartPreloading) {
                     this.notify('info', 'preloading next song...')
                     let preloader = document.querySelector('audio.preloader')
-                    preloader.src = this.song.nextStream
+                    preloader.src = this.getEndpointUrl() + this.song.nextStream
                     this.hasStartPreloading = true
                 }
             },
