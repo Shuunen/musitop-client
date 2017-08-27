@@ -117,8 +117,8 @@ window.onload = function () {
                 this.song.canPlay = false
                 this.song.hasBeenMarked = false
                 this.song.waitingForNext = false
-                this.song.stream = metadata.stream
-                this.song.nextStream = metadata.nextStream
+                this.song.stream = this.urlTimestamped(metadata.stream)
+                this.song.nextStream = this.urlTimestamped(metadata.nextStream)
                 this.song.cover = this.urlTimestamped('/cover.jpg')
                 this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
                 this.hasStartPreloading = false
@@ -128,7 +128,7 @@ window.onload = function () {
                 this.updateDynamicStyles()
             },
             urlTimestamped(url) {
-                return this.getEndpointUrl() + url + '?t=' + this.song.uid
+                return this.getEndpointUrl() + url + '?t=' + this.getTimestamp()
             },
             handleMediaSession() {
                 if ('mediaSession' in navigator) {
@@ -244,7 +244,7 @@ window.onload = function () {
                         // console.debug('currentTime = 0');
                         this.player.currentTime = 0
                         // console.debug('set player.src');
-                        this.player.src = this.getEndpointUrl() + this.song.stream
+                        this.player.src = this.song.stream
                     }
                 } else {
                     this.isLoading = false
@@ -290,7 +290,7 @@ window.onload = function () {
                 if (!this.hasStartPreloading) {
                     this.notify('info', 'preloading next song...')
                     let preloader = document.querySelector('audio.preloader')
-                    preloader.src = this.getEndpointUrl() + this.song.nextStream
+                    preloader.src = this.song.nextStream
                     this.hasStartPreloading = true
                 }
             },
