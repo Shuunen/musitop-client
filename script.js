@@ -118,13 +118,13 @@ window.onload = function () {
                 this.song.hasBeenMarked = false
                 this.song.waitingForNext = false
                 this.song.stream = this.urlTimestamped(metadata.stream)
+                this.setPlayerSource(this.song.nextStream || this.song.stream) // if nextStream has been preloaded use this url
                 this.song.nextStream = this.urlTimestamped(metadata.nextStream)
                 this.song.cover = this.urlTimestamped('/cover.jpg')
                 this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
                 this.hasStartPreloading = false
                 this.handleMediaSession()
                 this.resetProgressBar()
-                this.setPlayerSource()
                 this.updateDynamicStyles()
             },
             urlTimestamped(url) {
@@ -238,13 +238,13 @@ window.onload = function () {
                     this.guessDefaultEndpoint()
                 }
             },
-            setPlayerSource: function () {
+            setPlayerSource: function (src) {
                 if (this.options.audioClientSide) {
-                    if (this.player.src != this.song.stream) {
+                    if (this.player.src != src) {
                         // console.debug('currentTime = 0');
                         this.player.currentTime = 0
                         // console.debug('set player.src');
-                        this.player.src = this.song.stream
+                        this.player.src = src
                     }
                 } else {
                     this.isLoading = false
