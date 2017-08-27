@@ -267,6 +267,9 @@ window.onload = function () {
             updateStatus: function (event) {
                 if (this.options.audioClientSide) {
                     // this.notify('Client', e.type, 'info');
+                    if (event.type === 'play' && !this.hasStartPreloading) {
+                        setTimeout(() => this.preloadNext(), 2000)
+                    }
                     if (event.type === 'canplay' && !this.song.waitingForNext) {
                         this.isLoading = false
                         this.song.canPlay = true
@@ -274,7 +277,6 @@ window.onload = function () {
                             // console.debug('player.play (canplay)');
                             this.player.play()
                         }
-                        setTimeout(() => this.preloadNext(), 2000)
                     } else if (!this.isLoading) {
                         this.isPaused = this.player.paused
                         this.isPlaying = !this.player.paused
