@@ -1,3 +1,9 @@
+const PaletteParsers = {
+    primary: ['LightMuted', 'LightVibrant'],
+    secondary: ['DarkMuted', 'DarkVibrant'],
+    bonus: ['Vibrant', 'Muted']
+}
+
 window.onload = function () {
 
     Vue.component('toast', {
@@ -52,8 +58,8 @@ window.onload = function () {
             hasStartPreloading: false,
             dynamicStyles: '',
             colors: {
-                primary: 'grey',
-                secondary: 'whitesmoke'
+                primary: 'black',
+                secondary: 'snow'
             },
             toaster: {
                 stack: [],
@@ -106,7 +112,6 @@ window.onload = function () {
                 if (!metadata || metadata.uid === this.song.uid) {
                     return
                 }
-                this.notify('info', 'endpoint is ' + this.getEndpointUrl())
                 this.notify('Socket', 'received fresh metadata infos')
                 // this.notify('info', metadata);
                 this.song.uid = metadata.uid
@@ -120,12 +125,10 @@ window.onload = function () {
                 this.song.stream = this.urlTimestamped(metadata.stream)
                 this.setPlayerSource(this.song.nextStream || this.song.stream) // if nextStream has been preloaded use this url
                 this.song.nextStream = this.urlTimestamped(metadata.nextStream)
-                this.song.cover = this.urlTimestamped('/cover.jpg')
-                this.song.coverBlur = this.urlTimestamped('/cover-blurry.jpg')
+                this.song.cover = this.urlTimestamped('/cover/' + metadata.coverId + '.jpg')
                 this.hasStartPreloading = false
                 this.handleMediaSession()
                 this.resetProgressBar()
-                this.updateDynamicStyles()
             },
             urlTimestamped(url) {
                 return this.getEndpointUrl() + url + '?t=' + this.getTimestamp()
@@ -142,9 +145,10 @@ window.onload = function () {
                             { src: 'https://dummyimage.com/128x128', sizes: '128x128', type: 'image/png' },
                             { src: 'https://dummyimage.com/192x192', sizes: '192x192', type: 'image/png' },
                             { src: 'https://dummyimage.com/384x384', sizes: '384x384', type: 'image/png' },
-                            */
                             { src: this.urlTimestamped('/cover-256.jpg'), sizes: '256x256', type: 'image/jpeg' },
                             { src: this.urlTimestamped('/cover-512.jpg'), sizes: '512x512', type: 'image/jpeg' },
+                            */
+                            { src: this.song.cover, type: 'image/jpeg' }
                         ]
                     })
                     navigator.mediaSession.setActionHandler('play', () => this.pauseResume())
@@ -153,19 +157,25 @@ window.onload = function () {
                 }
             },
             onPalette: function (palette) {
-                if (palette && palette.Vibrant && palette.Vibrant._rgb) {
-                    this.colors.primary = 'rgb(' + palette.Vibrant._rgb.join(',') + ')'
-                } else {
-                    this.colors.primary = 'black'
+                if (!palette) {
+                    return
                 }
-                if (palette && palette.LightVibrant && palette.LightVibrant._rgb) {
-                    this.colors.secondary = 'rgb(' + palette.LightVibrant._rgb.join(',') + ')'
-                } else {
-                    this.colors.secondary = 'snow'
-                }
-                if (palette && palette.LightMuted && palette.LightMuted._rgb) {
-                    this.colors.bonus = 'rgb(' + palette.LightMuted._rgb.join(',') + ')'
-                }
+                this.notify('Socket', 'received fresh color palette')
+                Object.keys(PaletteParsers).forEach(color => {
+                    let keys = PaletteParsers[color]
+                    let rgb = ''
+                    keys.forEach(key => {
+                        if (rgb === '' && palette[key] && palette[key]._rgb) {
+                            this.notify('Palette', 'will use ' + key + ' for ' + color + ' color')
+                            rgb = 'rgb(' + palette[key]._rgb.join(',') + ')'
+                        }
+                    })
+                    if (rgb.length) {
+                        // only update color if something has been found in palette
+                        this.colors[color] = rgb
+                    }
+                })
+                this.updateDynamicStyles()
             },
             onMusicWas: function (musicWas) {
                 this.notify('Client', 'Server said that music was "' + musicWas + '"')
@@ -178,9 +188,7 @@ window.onload = function () {
                 } else if (musicWas === 'next') {
                     this.notify('Skip', 'Loading next song...', 'info', true)
                     this.song.waitingForNext = true
-                    setTimeout(() => {
-                        this.isLoading = true
-                    }, 100)
+                    this.isLoading = true
                 } else if (musicWas === 'pause') {
                     this.notify('Pause', 'Was asked by server', 'info')
                 } else {
@@ -259,9 +267,13 @@ window.onload = function () {
                 this.dynamicStyles = '<style>'
                 this.dynamicStyles += '.color-primary { color: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.color-secondary { color: ' + this.colors.secondary + '}'
+                this.dynamicStyles += '.color-bonus { color: ' + this.colors.bonus + '}'
                 this.dynamicStyles += '.stroke-primary { stroke: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.stroke-secondary { stroke: ' + this.colors.secondary + '}'
-                this.dynamicStyles += '.cover-background { background-image: url(' + this.song.cover + ')}'
+                this.dynamicStyles += '.stroke-bonus { stroke: ' + this.colors.bonus + '}'
+                this.dynamicStyles += '.background-primary { background-color: ' + this.colors.primary + '}'
+                this.dynamicStyles += '.background-secondary { background-color: ' + this.colors.secondary + '}'
+                this.dynamicStyles += '.background-bonus { background-color: ' + this.colors.bonus + '}'
                 this.dynamicStyles += '</style>'
             },
             updateStatus: function (event) {
@@ -584,6 +596,8 @@ window.onload = function () {
             this.getStorage()
             this.initKeyboard()
             this.initServiceWorker()
+            this.updateDynamicStyles()
+            this.notify('info', 'endpoint is ' + this.getEndpointUrl())
             setInterval(this.cron, 1000)
         }
     })

@@ -33,6 +33,7 @@
             align-items: center;
             height: 100%;
             box-shadow: inset 2px 2px 40px #333;
+            transition: background-color 3s;
         }
 
         .absolute-full {
@@ -104,18 +105,6 @@
             100% {
                 transform: scale(1) rotate(0) translate(20px, 20px);
             }
-        }
-
-        .cover-blur {
-            left: -40px;
-            top: -40px;
-            min-height: calc(100% + 80px);
-            min-width: calc(100% + 80px);
-            position: absolute;
-            z-index: 0;
-            opacity: 0.7;
-            animation: background-cover-move 60s linear infinite;
-            animation-direction: alternate;
         }
 
         .inside-shadow {
@@ -508,6 +497,8 @@
             opacity: 0;
             transition: opacity .3s;
             will-change: opacity;
+            background-size: 120%;
+            background-position: 40% 50%;
         }
 
         .player-cover.visible {
@@ -517,7 +508,7 @@
 </head>
 
 <body>
-    <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'">
+    <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'" class="background-secondary" v-on:dblclick="options.debugActive = !options.debugActive">
         <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
             v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
@@ -579,14 +570,8 @@
                     </span>
                 </label>
         </div>
-        <div class="gradient-overlay absolute-full">
-            <img v-bind:src="song.cover" alt="song cover for background">
-        </div>
-        <img class="cover-blur" v-bind:src="song.coverBlur" alt="song cover for background" v-on:dblclick="options.debugActive = !options.debugActive"
-        />
         <div class="player" v-bind:class="{ visible: isConnected }">
-            <div class="player-cover cover-background absolute-full" v-bind:class="{ visible: !isLoading }">
-            </div>
+            <div class="player-cover absolute-full" v-bind:class="{ visible: !isLoading }" v-bind:style="{ backgroundImage: song.cover ? 'url(' + song.cover + ')' : 'none' }"></div>
             <div class="player-top">
                 <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
                     <use xlink:href="icons/icons.svg#like"></use>
@@ -631,10 +616,10 @@
         <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
             <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
             <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
-            <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
+            <use class="triangle triangle-1 color-bonus" xlink:href="icons/logo.svg#triangle-1"></use>
             <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
-            <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
-            <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
+            <use class="text text-start color-primary stroke-bonus" xlink:href="icons/logo.svg#text-start"></use>
+            <use class="text text-end color-bonus stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
         </svg>
         <div class="toasts">
             <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
