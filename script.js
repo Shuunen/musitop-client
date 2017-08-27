@@ -380,7 +380,9 @@ window.onload = function () {
             nextSong: function (event) {
                 this.avoidNextSound = true
                 this.musicIs('next')
-                this.socket.emit('event', 'next asked from ' + this.getWebId() + ' because of ' + event.type)
+                let msg = 'next asked from ' + this.getWebId() + ' because of '
+                msg += (event && event.type) ? event.type : 'unknown event'
+                this.socket.emit('event', msg)
             },
             pauseResume: function () {
                 if (this.options.audioClientSide) {
