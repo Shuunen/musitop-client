@@ -57,6 +57,7 @@ window.onload = function () {
             },
             hasStartPreloading: false,
             dynamicStyles: '',
+            dynamicColorPalette: '',
             colors: {
                 primary: 'black',
                 secondary: 'snow'
@@ -161,19 +162,22 @@ window.onload = function () {
                     return
                 }
                 this.notify('Socket', 'received fresh color palette')
+                this.dynamicColorPalette = ''
                 Object.keys(PaletteParsers).forEach(color => {
                     let keys = PaletteParsers[color]
-                    let rgb = ''
+                    let colorSet = false
                     keys.forEach(key => {
-                        if (rgb === '' && palette[key] && palette[key]._rgb) {
-                            this.notify('Palette', 'will use ' + key + ' for ' + color + ' color')
-                            rgb = 'rgb(' + palette[key]._rgb.join(',') + ')'
+                        if (palette[key] && palette[key]._rgb) {
+                            let rgb = 'rgb(' + palette[key]._rgb.join(',') + ')'
+                            this.dynamicColorPalette += '<div class="line"><div>' + key + '</div><div style="background-color:' + rgb + '"></div></div>'
+                            this.colors[key] = rgb
+                            if (!colorSet) {
+                                this.notify('Palette', 'will use ' + key + ' for ' + color + ' color')
+                                this.colors[color] = rgb
+                                colorSet = true
+                            }
                         }
                     })
-                    if (rgb.length) {
-                        // only update color if something has been found in palette
-                        this.colors[color] = rgb
-                    }
                 })
                 this.updateDynamicStyles()
             },
@@ -274,6 +278,7 @@ window.onload = function () {
                 this.dynamicStyles += '.background-primary { background-color: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.background-secondary { background-color: ' + this.colors.secondary + '}'
                 this.dynamicStyles += '.background-bonus { background-color: ' + this.colors.bonus + '}'
+                this.dynamicStyles += '.app-background { background-image: radial-gradient( circle at top right, ' + this.colors.primary + ', ' + this.colors.bonus + ' ); }'
                 this.dynamicStyles += '</style>'
             },
             updateStatus: function (event) {

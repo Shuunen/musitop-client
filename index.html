@@ -367,7 +367,8 @@
             background: #9a4653;
         }
 
-        pre {
+        pre,
+        .color-palette {
             position: absolute;
             font-size: 15px;
             bottom: -20px;
@@ -380,14 +381,37 @@
             margin: 0;
             line-height: 18px;
             opacity: 0;
+            border-top-right-radius: 12px;
         }
 
-        pre.visible {
+        pre.visible,
+        .color-palette.visible {
             opacity: 1;
         }
 
         pre strong {
             color: green;
+        }
+
+        div.color-palette {
+            left: inherit;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 0;
+        }
+
+        .color-palette .line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .color-palette .line>div+div {
+            width: 40px;
+            margin-left: 10px;
         }
 
         .options-modal-toggle {
@@ -508,7 +532,7 @@
 </head>
 
 <body>
-    <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'" class="background-secondary" v-on:dblclick="options.debugActive = !options.debugActive">
+    <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'" class="app-background" v-on:dblclick="options.debugActive = !options.debugActive">
         <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
             v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
@@ -640,6 +664,8 @@ song canPlay ? <span v-html="song.canPlay ? '<strong>YES</strong>':'no'"></span>
 song duration : <span v-html="song.duration"></span> seconds
 secondsLeft : <span v-html="getSecondsLeft()"></span> seconds
         </pre>
+        <!-- color palette -->
+        <div v-if="options.debugActive" v-bind:class="{ visible: options.debugActive }" class="color-palette" v-html="dynamicColorPalette"></div>
     </div>
     <!-- scripts -->
     <script src="vendors/socket-io-slim_202.js"></script>
