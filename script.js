@@ -60,6 +60,7 @@ window.onload = function () {
             hasStartPreloading: false,
             dynamicStyles: '',
             dynamicColorPalette: '',
+            metaThemeColor: null,
             colors: {
                 primary: 'black',
                 secondary: 'snow'
@@ -171,11 +172,17 @@ window.onload = function () {
                     keys.forEach(key => {
                         if (palette[key] && palette[key]._rgb) {
                             let rgb = 'rgb(' + palette[key]._rgb.join(',') + ')'
+                            // only set primary, secondary,... once
                             if (!colorSet) {
                                 this.dynamicColorPalette += '<div class="line"><div>' + color + '</div><div style="background-color:' + rgb + '"></div></div>'
                                 this.notify('Palette', 'will use ' + key + ' for ' + color + ' color')
                                 this.colors[color] = rgb
                                 colorSet = true
+                                // update app theme color in meta tag
+                                if (color === 'primary') {
+                                    let hex = this.hexFromRgb(palette[key]._rgb[0], palette[key]._rgb[1], palette[key]._rgb[2])
+                                    this.metaThemeColor.setAttribute('content', hex)
+                                }
                             }
                         }
                     })
@@ -597,7 +604,8 @@ window.onload = function () {
             shuffle: (arr) => arr.sort(() => (4 * Math.random() > 2) ? 1 : -1),
             pickOne: function (arr) {
                 return this.shuffle(arr)[this.intBetween(0, arr.length - 1)]
-            }
+            },
+            hexFromRgb: (r, g, b) => "#" + (((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1))
         },
         mounted() {
             this.notify('info', this.app.name + ' init')
@@ -606,6 +614,8 @@ window.onload = function () {
             this.initServiceWorker()
             this.updateDynamicStyles()
             this.notify('info', 'endpoint is ' + this.getEndpointUrl())
+            this.metaThemeColor = document.querySelector("meta[name=theme-color]")
+            console.log(this.metaThemeColor)
             setInterval(this.cron, 1000)
         }
     })
