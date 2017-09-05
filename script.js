@@ -1,6 +1,8 @@
 const PaletteParsers = {
-    primary: ['LightMuted', 'LightVibrant'],
-    secondary: ['DarkMuted', 'DarkVibrant'],
+    primary: ['LightVibrant', 'Vibrant'],
+    primaryAlt: ['LightMuted', 'LightVibrant'],
+    secondary: ['DarkVibrant', 'Muted'],
+    secondaryAlt: ['DarkMuted', 'DarkVibrant'],
     bonus: ['Vibrant', 'Muted']
 }
 
@@ -169,9 +171,8 @@ window.onload = function () {
                     keys.forEach(key => {
                         if (palette[key] && palette[key]._rgb) {
                             let rgb = 'rgb(' + palette[key]._rgb.join(',') + ')'
-                            this.dynamicColorPalette += '<div class="line"><div>' + key + '</div><div style="background-color:' + rgb + '"></div></div>'
-                            this.colors[key] = rgb
                             if (!colorSet) {
+                                this.dynamicColorPalette += '<div class="line"><div>' + color + '</div><div style="background-color:' + rgb + '"></div></div>'
                                 this.notify('Palette', 'will use ' + key + ' for ' + color + ' color')
                                 this.colors[color] = rgb
                                 colorSet = true
@@ -271,6 +272,8 @@ window.onload = function () {
                 this.dynamicStyles = '<style>'
                 this.dynamicStyles += '.color-primary { color: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.color-secondary { color: ' + this.colors.secondary + '}'
+                this.dynamicStyles += '.color-primary-alt { color: ' + this.colors.primaryAlt + '}'
+                this.dynamicStyles += '.color-secondary-alt { color: ' + this.colors.secondaryAlt + '}'
                 this.dynamicStyles += '.color-bonus { color: ' + this.colors.bonus + '}'
                 this.dynamicStyles += '.stroke-primary { stroke: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.stroke-secondary { stroke: ' + this.colors.secondary + '}'
@@ -278,7 +281,7 @@ window.onload = function () {
                 this.dynamicStyles += '.background-primary { background-color: ' + this.colors.primary + '}'
                 this.dynamicStyles += '.background-secondary { background-color: ' + this.colors.secondary + '}'
                 this.dynamicStyles += '.background-bonus { background-color: ' + this.colors.bonus + '}'
-                this.dynamicStyles += '.app-background { background-image: radial-gradient( circle at top right, ' + this.colors.primary + ', ' + this.colors.bonus + ' ); }'
+                this.dynamicStyles += '.app-background { background-image: radial-gradient( circle at top right, ' + this.colors.primaryAlt + ', ' + this.colors.bonus + ' ); }'
                 this.dynamicStyles += '</style>'
             },
             updateStatus: function (event) {

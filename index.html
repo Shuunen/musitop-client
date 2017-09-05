@@ -57,14 +57,14 @@
         .player {
             display: flex;
             flex-direction: column;
-            max-width: 550px;
+            max-width: 450px;
             min-width: 250px;
             width: 85vw;
             height: 85vw;
             min-width: 280px;
             min-height: 280px;
-            max-height: 350px;
-            border-radius: 20px;
+            max-height: 430px;
+            border-radius: 12px;
             color: whitesmoke;
             top: -30px;
             position: relative;
@@ -83,7 +83,7 @@
         .cover-wrap {
             z-index: 30;
             overflow: hidden;
-            border-radius: 20px;
+            border-radius: 12px;
         }
 
         .cover {
@@ -176,14 +176,14 @@
 
         .player-inner-gradient {
             z-index: 30;
-            border-radius: 20px;
+            border-radius: 12px;
             box-shadow: inset 0px 10px 120px 0 #222, inset 0px -40px 150px 10px #222;
         }
 
         .player-border {
             box-shadow: inset 1px 3px 8px white;
             z-index: 40;
-            border-radius: 20px;
+            border-radius: 12px;
         }
 
         .progress-bar-wrapper {
@@ -236,7 +236,7 @@
             background-size: contain;
             background-repeat: no-repeat;
             color: white;
-            filter: drop-shadow(2px 2px 3px #222) drop-shadow(0px 0px 15px white);
+            filter: drop-shadow(2px 2px 3px #222);
             outline: none;
         }
 
@@ -517,12 +517,12 @@
         }
 
         .player-cover {
-            border-radius: 20px;
+            border-radius: 12px;
             opacity: 0;
             transition: opacity .3s;
             will-change: opacity;
-            background-size: 120%;
-            background-position: 40% 50%;
+            background-size: 100%;
+            background-position: center;
         }
 
         .player-cover.visible {
@@ -533,8 +533,8 @@
 
 <body>
     <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'" class="app-background" v-on:dblclick="options.debugActive = !options.debugActive">
-        <svg class="icon options-modal-toggle top right" v-on:click="options.modal.isOpened = !options.modal.isOpened" viewbox="0 0 128 128"
-            v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
+        <svg class="icon options-modal-toggle top right color-primary-alt" v-on:click="options.modal.isOpened = !options.modal.isOpened"
+            viewbox="0 0 128 128" v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
         </svg>
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
@@ -640,10 +640,10 @@
         <svg id="logo" version="1.1" viewbox="0 135 590 365" preserveaspectratio="xMinYMin meet">
             <use class="background triangle-2-background" xlink:href="icons/logo.svg#triangle-2-background"></use>
             <use class="background triangle-1-background" xlink:href="icons/logo.svg#triangle-1-background"></use>
-            <use class="triangle triangle-1 color-bonus" xlink:href="icons/logo.svg#triangle-1"></use>
+            <use class="triangle triangle-1 color-secondary" xlink:href="icons/logo.svg#triangle-1"></use>
             <use class="triangle triangle-2 color-primary" xlink:href="icons/logo.svg#triangle-2"></use>
-            <use class="text text-start color-primary stroke-bonus" xlink:href="icons/logo.svg#text-start"></use>
-            <use class="text text-end color-bonus stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
+            <use class="text text-start color-primary stroke-secondary" xlink:href="icons/logo.svg#text-start"></use>
+            <use class="text text-end color-secondary stroke-primary" xlink:href="icons/logo.svg#text-end"></use>
         </svg>
         <div class="toasts">
             <toast v-for="(toast, index) in toaster.stack" v-bind:toast="toast"></toast>
