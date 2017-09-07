@@ -534,8 +534,7 @@
 
 <body>
     <div id="app" v-bind:class="isMobile ? 'mobile':'desktop'" class="app-background" v-on:dblclick="options.debugActive = !options.debugActive">
-        <svg class="icon options-modal-toggle top right color-primary-alt" v-on:click="options.modal.isOpened = !options.modal.isOpened"
-            viewbox="0 0 128 128" v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
+        <svg class="icon options-modal-toggle top right color-primary-alt" v-on:click="toggleOptions" viewbox="0 0 128 128" v-bind:class="{ opened: options.modal.isOpened, centered: !isConnected }">
             <use xlink:href="icons/icons.svg#settings"></use>
         </svg>
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
@@ -672,6 +671,16 @@ secondsLeft : <span v-html="getSecondsLeft()"></span> seconds
     <script src="vendors/socket-io-slim_202.js"></script>
     <script src="vendors/vue_242.js"></script>
     <script src="script.js"></script>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-106052081-1', 'auto');
+        ga('send', 'pageview');
+    </script>
 </body>
 
 </html>

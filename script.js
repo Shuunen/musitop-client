@@ -6,6 +6,11 @@ const PaletteParsers = {
     bonus: ['Vibrant', 'Muted']
 }
 
+const Events = {
+    openOptions: 'openOptions',
+    closeOptions: 'closeOptions'
+}
+
 window.onload = function () {
 
     Vue.component('toast', {
@@ -605,7 +610,20 @@ window.onload = function () {
             pickOne: function (arr) {
                 return this.shuffle(arr)[this.intBetween(0, arr.length - 1)]
             },
-            hexFromRgb: (r, g, b) => "#" + (((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1))
+            hexFromRgb: (r, g, b) => "#" + (((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)),
+            toggleOptions: function () {
+                if (this.options.modal.isOpened) {
+                    this.track(Events.closeOptions)
+                } else {
+                    this.track(Events.openOptions)
+                }
+                this.options.modal.isOpened = !this.options.modal.isOpened
+            },
+            track: function (event) {
+                if (ga) {
+                    ga('send', event);
+                }
+            }
         },
         mounted() {
             this.notify('info', this.app.name + ' init')
