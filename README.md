@@ -2,7 +2,7 @@
 
 It will allow you to listen & control a [Musitop](https://github.com/Shuunen/musitop) server.
 
-<img src="https://cdn.rawgit.com/Shuunen/musitop-client/1e78f4b7/designs/v3.0_c.png" width="600">
+<img src="http://imgur.com/7d8HRLUl.png" width="600">
 
 ## Huge thanks
 
