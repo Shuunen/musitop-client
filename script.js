@@ -95,7 +95,7 @@ window.onload = function () {
                     isOpened: false
                 },
                 canUpdate: true,
-                doSoundNotifications: true,
+                doSoundNotifications: false,
                 doToastNotifications: true,
                 doAutoplay: false,
                 debugActive: false
