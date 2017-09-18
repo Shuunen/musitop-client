@@ -36,6 +36,7 @@ window.onload = function () {
                 name: 'Musitop',
                 version: '3.5.0'
             },
+            firstStart: true,
             isConnected: false,
             isMobile: (typeof window.orientation !== 'undefined'),
             isLoading: true,
@@ -222,6 +223,12 @@ window.onload = function () {
             onConnection: function () {
                 this.notify('Socket', 'client side connection init')
                 this.isConnected = true
+                if (this.firstStart) {
+                    this.firstStart = false
+                } else {
+                    this.notify('Info', 'Restarting for 2nd init...', 'success')
+                    setTimeout(this.restart, 2000)
+                }
                 this.getServerVersion()
             },
             onOptions: function (options) {
