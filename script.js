@@ -34,7 +34,7 @@ window.onload = function () {
         data: {
             app: {
                 name: 'Musitop',
-                version: '3.5.0'
+                version: '3.5.2'
             },
             firstStart: true,
             isConnected: false,
