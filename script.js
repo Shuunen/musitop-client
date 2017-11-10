@@ -85,6 +85,7 @@ window.onload = function () {
                 },
                 audioClientSide: false,
                 audioServerSide: false,
+                serverServeWebClient: false,
                 keyboardTriggers: {
                     good: ['MediaTrackPrevious', 'ArrowUp'],
                     bad: ['MediaStop'],
@@ -239,6 +240,7 @@ window.onload = function () {
                 this.notify('info', options)
                 this.options.audioClientSide = options.audioClientSide
                 this.options.audioServerSide = !options.audioClientSide
+                this.options.serverServeWebClient = options.serveWebClient
                 if (this.options.audioClientSide && !this.player) {
                     this.initPlayer()
                 }
@@ -617,7 +619,7 @@ window.onload = function () {
             pickOne: function (arr) {
                 return this.shuffle(arr)[this.intBetween(0, arr.length - 1)]
             },
-            hexFromRgb: (r, g, b) => "#" + (((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)),
+            hexFromRgb: (r, g, b) => '#' + (((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)),
             toggleOptions: function () {
                 if (this.options.modal.isOpened) {
                     this.track(Events.closeOptions)
@@ -628,7 +630,7 @@ window.onload = function () {
             },
             track: function (event) {
                 if (ga) {
-                    ga('send', event);
+                    ga('send', event)
                 }
             }
         },
@@ -639,8 +641,7 @@ window.onload = function () {
             this.initServiceWorker()
             this.updateDynamicStyles()
             this.notify('info', 'endpoint is ' + this.getEndpointUrl())
-            this.metaThemeColor = document.querySelector("meta[name=theme-color]")
-            console.log(this.metaThemeColor)
+            this.metaThemeColor = document.querySelector('meta[name=theme-color]')
             setInterval(this.cron, 1000)
         }
     })

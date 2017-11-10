@@ -528,6 +528,7 @@
         .player-cover.visible {
             opacity: 1;
         }
+
         /* @media (max-width: 12450px) {} */
     </style>
 </head>
@@ -540,59 +541,49 @@
         <div class="options-modal absolute-full" v-bind:class="{ opened: options.modal.isOpened }">
             <div class="title option-line">Options</div>
             <label class="option-line">
-                    <span>Server endpoint</span>
-                    <span>
-                        <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress">
-                        &nbsp;:&nbsp;
-                        <input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
-                    </span>
-                </label>
+                <span>Server endpoint</span>
+                <span>
+                    <input type="text" v-model.lazy="options.endpoint.address" v-on:change="updateEndpointAddress"> &nbsp;:&nbsp;
+                    <input class="endpoint-port" type="text" v-model.lazy="options.endpoint.port" v-on:change="initSocket">
+                </span>
+            </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doSoundNotifications }">
-                    <span>Sound notifications</span>
-                    <span>
-                        <input type="checkbox" v-model="options.doSoundNotifications" v-on:change="setStorage">
-                        &nbsp;&nbsp;
-                        {{ options.doSoundNotifications ? 'enabled' : 'disabled' }}
-                    </span>
-                </label>
+                <span>Sound notifications</span>
+                <span>
+                    <input type="checkbox" v-model="options.doSoundNotifications" v-on:change="setStorage"> &nbsp;&nbsp; {{ options.doSoundNotifications ? 'enabled' : 'disabled' }}
+                </span>
+            </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doToastNotifications }">
-                    <span>Toast notifications</span>
-                    <span>
-                        <input type="checkbox" v-model="options.doToastNotifications" v-on:change="setStorage">
-                        &nbsp;&nbsp;
-                        {{ options.doToastNotifications ? 'enabled' : 'disabled' }}
-                    </span>
-                </label>
+                <span>Toast notifications</span>
+                <span>
+                    <input type="checkbox" v-model="options.doToastNotifications" v-on:change="setStorage"> &nbsp;&nbsp; {{ options.doToastNotifications ? 'enabled' : 'disabled' }}
+                </span>
+            </label>
             <label class="option-line" v-bind:class="{ disabled: !options.doAutoplay }">
-                    <span>Autoplay music</span>
-                    <span>
-                        <input type="checkbox" v-model="options.doAutoplay" v-on:change="setStorage">
-                        &nbsp;&nbsp;
-                        {{ options.doAutoplay ? 'enabled' : 'disabled' }}
-                    </span>
-                </label>
+                <span>Autoplay music</span>
+                <span>
+                    <input type="checkbox" v-model="options.doAutoplay" v-on:change="setStorage"> &nbsp;&nbsp; {{ options.doAutoplay ? 'enabled' : 'disabled' }}
+                </span>
+            </label>
             <label class="option-line" v-bind:class="{ disabled: !options.debugActive }">
-                    <span>Debug panel</span>
-                    <span>
-                        <input type="checkbox" v-model="options.debugActive" v-on:change="setStorage">
-                        &nbsp;&nbsp;
-                        {{ options.debugActive ? 'enabled' : 'disabled' }}
-                    </span>
-                </label>
+                <span>Debug panel</span>
+                <span>
+                    <input type="checkbox" v-model="options.debugActive" v-on:change="setStorage"> &nbsp;&nbsp; {{ options.debugActive ? 'enabled' : 'disabled' }}
+                </span>
+            </label>
             <label class="option-line">
-                    <span>Server version {{ server.version }}</span>
-                    <span>
-                        <input type="button" v-on:click="updateServer" value="check for updates">
-                    </span>
-                </label>
-            <label class="option-line">
-                    <span>Client version {{ app.version }}</span>
-                     <span>
-                         <input type="button" v-on:click="updateClient" value="check for updates">
-                         &nbsp;&nbsp;
-                         <input type="button" v-on:click="restart" value="reload">
-                    </span>
-                </label>
+                <span>Server version {{ server.version }}</span>
+                <span>
+                    <input type="button" v-on:click="updateServer" value="check for updates">
+                </span>
+            </label>
+            <label class="option-line" v-show="options.serverServeWebClient">
+                <span>Client version {{ app.version }}</span>
+                <span>
+                    <input type="button" v-on:click="updateClient" value="check for updates"> &nbsp;&nbsp;
+                    <input type="button" v-on:click="restart" value="reload">
+                </span>
+            </label>
         </div>
         <div class="player" v-bind:class="{ visible: isConnected }">
             <div class="player-cover absolute-full" v-bind:class="{ visible: !isLoading }" v-bind:style="{ backgroundImage: song.cover ? 'url(' + song.cover + ')' : 'none' }"></div>
