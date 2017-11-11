@@ -89,7 +89,7 @@ window.onload = function () {
                 serverServeWebClient: false,
                 keyboardTriggers: {
                     good: ['MediaTrackPrevious', 'ArrowUp'],
-                    bad: ['MediaStop'],
+                    bad: ['MediaStop', 'Delete'],
                     next: ['MediaTrackNext', 'ArrowRight'],
                     pause: [' ', 'MediaPlayPause']
                 },
