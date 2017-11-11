@@ -600,7 +600,7 @@
                 </svg>
             </div>
             <div class="player-center">
-                <svg v-show="!isLoading" v-on:click="nextSong" class="icon" viewbox="0 0 128 128">
+                <svg class="icon" v-show="!isLoading" v-on:click="nextSong" viewbox="0 0 128 128">
                     <use xlink:href="icons/icons.svg#right"></use>
                 </svg>
                 <div v-show="isLoading" class="spinner"></div>
@@ -662,6 +662,7 @@ secondsLeft : <span v-html="getSecondsLeft()"></span> seconds
     <!-- scripts -->
     <script src="vendors/socket-io-slim_202.js"></script>
     <script src="vendors/vue_242.js"></script>
+    <script src="vendors/amplitude_321.js"></script>
     <script src="script.js"></script>
     <script>
         (function (i, s, o, g, r, a, m) {
