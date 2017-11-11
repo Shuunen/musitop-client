@@ -60,6 +60,7 @@ window.onload = function () {
                 title: '',
                 duration: 0,
                 hasBeenMarked: false,
+                hasBeenLiked: false,
                 waitingForNext: true,
                 canPlay: false
             },
@@ -132,6 +133,7 @@ window.onload = function () {
                 this.song.duration = Math.round(metadata.duration)
                 this.song.canPlay = false
                 this.song.hasBeenMarked = false
+                this.song.hasBeenLiked = false
                 this.song.waitingForNext = false
                 this.song.stream = this.urlTimestamped(metadata.stream)
                 this.setPlayerSource(this.song.nextStream || this.song.stream) // if nextStream has been preloaded use this url
@@ -201,6 +203,7 @@ window.onload = function () {
                 if (musicWas === 'good') {
                     this.notify('Will keep', this.song.artist + ' - ' + this.song.title, 'success', true)
                     this.song.hasBeenMarked = true
+                    this.song.hasBeenLiked = true
                 } else if (musicWas === 'bad') {
                     this.notify('Deleting', this.song.artist + ' - ' + this.song.title, 'alert')
                     this.song.hasBeenMarked = true

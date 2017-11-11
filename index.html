@@ -589,7 +589,8 @@
             <div class="player-cover absolute-full" v-bind:class="{ visible: !isLoading }" v-bind:style="{ backgroundImage: song.cover ? 'url(' + song.cover + ')' : 'none' }"></div>
             <div class="player-top">
                 <svg class="icon top left" v-on:click="musicIs('good')" viewbox="0 0 128 128">
-                    <use xlink:href="icons/icons.svg#like"></use>
+                    <use v-hive="song.hasBeenLiked" xlink:href="icons/icons.svg#like"></use>
+                    <use v-show="song.hasBeenLiked" xlink:href="icons/icons.svg#like-filled"></use>
                 </svg>
                 <svg class="icon top right" v-show="isPaused && !isLoading" v-on:click="pauseResume" viewbox="0 0 128 128">
                     <use xlink:href="icons/icons.svg#run"></use>
