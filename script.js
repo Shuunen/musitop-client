@@ -47,6 +47,7 @@ window.onload = function () {
                 notification: [new Audio('sounds/notification.mp3')],
                 ok: [new Audio('sounds/robot-ok-01.mp3'), new Audio('sounds/male-ok-01.mp3'), new Audio('sounds/male-ok-02.mp3'), new Audio('sounds/female-ok-01.mp3'), new Audio('sounds/female-ok-02.mp3'), new Audio('sounds/female-ok-03.mp3')]
             },
+            progressBarInit: false,
             progressBarStyle: {
                 transitionDuration: '0s',
                 transform: 'translateX(-100%)'
@@ -136,12 +137,41 @@ window.onload = function () {
                 this.song.hasBeenLiked = false
                 this.song.waitingForNext = false
                 this.song.stream = this.urlTimestamped(metadata.stream)
-                this.setPlayerSource(this.song.nextStream || this.song.stream) // if nextStream has been preloaded use this url
+                // this.setPlayerSource(this.song.nextStream || this.song.stream) // if nextStream has been preloaded use this url
                 this.song.nextStream = this.urlTimestamped(metadata.nextStream)
                 this.song.cover = this.urlTimestamped('/cover/' + metadata.coverId + '.jpg')
                 this.hasStartPreloading = false
                 this.handleMediaSession()
                 this.resetProgressBar()
+                // trying amplitude
+                const aSong = {
+                    name: this.song.title,
+                    artist: this.song.artist,
+                    album: this.song.album,
+                    url: this.song.stream,
+                    cover_art_url: this.song.cover
+                }
+                if (Amplitude.getSongs().length === 0) {
+                    this.notify('Amplitude', 'init')
+                    Amplitude.init({
+                        songs: [aSong],
+                        autoplay: this.options.doAutoplay,
+                        callbacks: {
+                            after_play: () => this.updateStatus('after_play'),
+                            song_change: () => this.updateStatus('song_change'),
+                            time_update: () => this.cron()
+                        }
+                    });
+                    this.isLoading = this.options.doAutoplay
+                } else {
+                    this.notify('Amplitude', 'added song to playlist')
+                    Amplitude.addSong(aSong)
+                    if (this.options.doAutoplay) {
+                        Amplitude.next()
+                        this.isPaused = false
+                        this.isPlaying = true
+                    }
+                }
             },
             urlTimestamped(url) {
                 return this.getEndpointUrl() + url + '?t=' + this.getTimestamp()
@@ -308,67 +338,61 @@ window.onload = function () {
                 this.dynamicStyles += '.app-background { background-image: radial-gradient( circle at top right, ' + this.colors.primaryAlt + ', ' + this.colors.bonus + ' ); }'
                 this.dynamicStyles += '</style>'
             },
-            updateStatus: function (event) {
+            updateStatus: function (aEvent) {
                 if (this.options.audioClientSide) {
-                    // this.notify('Client', e.type, 'info');
-                    if (event.type === 'play' && !this.hasStartPreloading) {
-                        setTimeout(() => this.preloadNext(), 2000)
-                    }
-                    if (event.type === 'canplay' && !this.song.waitingForNext) {
-                        this.isLoading = false
-                        this.song.canPlay = true
-                        if (this.options.doAutoplay) {
-                            // console.debug('player.play (canplay)');
-                            this.player.play()
-                        }
-                    } else if (!this.isLoading) {
-                        this.isPaused = this.player.paused
-                        this.isPlaying = !this.player.paused
-                    }
+                    this.notify('UpdateStatus', 'triggered by Amplitude event "' + aEvent + '"')
+                    this.setProgressBar()
                 } else if (this.options.audioServerSide) {
+                    this.notify('UpdateStatus', 'triggered by some secret force ?!?')
                     this.isLoading = false
                 }
-                this.setProgressBar('updateStatus')
             },
             preloadNext: function () {
-                if (!this.hasStartPreloading) {
-                    this.notify('info', 'preloading next song...')
+                if (this.hasStartPreloading) return
+                const buffer = Math.round(Amplitude.getBuffered() * 100) / 100
+                if (buffer >= 100) {
+                    this.notify('PreloadNext', 'preloading next song...')
                     let preloader = document.querySelector('audio.preloader')
                     preloader.src = this.song.nextStream
                     this.hasStartPreloading = true
+                } else {
+                    this.notify('PreloadNext', 'wait for Amplitude to buffer more (' + buffer + '%)')
                 }
             },
             resetProgressBar: function () {
+                this.progressBarInit = false
                 this.progressBarStyle.transitionDuration = '0s'
                 this.progressBarStyle.transform = 'translateX(-100%)'
             },
-            setProgressBar: function () {
+            setProgressBar: function (justUpdate) {
                 // this.notify('Info', 'in setProgressBar from "' + from + '"');
+                var percentPlayed = this.getPercentagePlayed()
+                if (percentPlayed === 0 || (this.progressBarInit && !justUpdate)) {
+                    return
+                } else {
+                    this.progressBarInit = true
+                }
                 var secondsLeft = this.getSecondsLeft()
-                var secondsPassed = this.song.duration - secondsLeft
-                var percentPlayed = Math.round(secondsPassed / this.song.duration * 10000) / 100
-                // console.log('secondsPassed / duration : ' + secondsPassed + '/' + this.song.duration + ' = ' + percentPlayed + '%');
-                // percentPlayed -= 2; // because
+                this.notify('ProgressBar', 'played at ' + percentPlayed + '%')
                 this.progressBarStyle.transitionDuration = '0s'
                 this.progressBarStyle.transform = 'translateX(-' + (100 - percentPlayed) + '%)'
-                // this.notify('Info', 'percentPlayed : ' + percentPlayed + '%');
                 setTimeout(() => {
+                    this.notify('ProgressBar', 'set transition duration at ' + secondsLeft + 's')
                     this.progressBarStyle.transitionDuration = secondsLeft + 's'
                 }, 300)
                 setTimeout(() => {
+                    this.notify('ProgressBar', 'set translateX at 0%')
                     this.progressBarStyle.transform = 'translateX(0%)'
                 }, 900)
             },
             musicJumpTo: function (event) {
                 var total = Math.round(event.target.getBoundingClientRect().width)
                 var selection = Math.round(event.layerX)
-                // console.log('selection / total : ' + selection + '/' + total + ' = ' + Math.round(selection / total * 100) + '%');
-                var percent = selection / total
-                var start = Math.round(percent * this.song.duration)
-                // console.debug('currentTime = ' + start);
-                this.player.currentTime = start
+                var percent = Math.round(selection / total * 10000) / 100
+                this.notify('MusicJumpTo', 'clicked at ' + percent + '%')
+                Amplitude.setSongPlayedPercentage(percent)
                 setTimeout(() => {
-                    this.setProgressBar('musicJumpTo')
+                    this.setProgressBar(true)
                 }, 100)
             },
             getTimestamp: function () {
@@ -430,18 +454,20 @@ window.onload = function () {
             },
             pauseResume: function () {
                 if (this.options.audioClientSide) {
-                    if (this.player.paused) {
-                        this.options.doAutoplay = true
-                        // console.debug('player.play (pauseResume)');
-                        this.player.play()
-                        this.notify('info', 'song  was paused, resuming...')
-                        setTimeout(this.setProgressBar, 100)
+                    this.notify('info', 'song was ' + (this.isPaused ? 'paused, resuming...' : 'playing, do pause'))
+                    if (this.isPaused) {
+                        Amplitude.play()
+                        this.isLoading = true
                     } else {
-                        // console.debug('player.pause (pauseResume)');
-                        this.player.pause()
-                        this.options.doAutoplay = false
-                        this.notify('info', 'song  was playing, do pause')
+                        Amplitude.pause()
+                        this.isPlaying = false
+                        this.isLoading = false
+                        this.resetProgressBar()
                     }
+                    this.isPaused = !this.isPaused // isPaused goes from true to false to true etc...
+                    this.options.doAutoplay = !this.isPaused // and autoplay is the opposite of pause status :p
+                } else {
+                    console.error('cannot play/pause when audio is server side')
                 }
             },
             notify: function (action, message, type, withSound) {
@@ -520,8 +546,20 @@ window.onload = function () {
             },
             cron: function () {
                 // console.log('in cron');
-                if (this.isPlaying && !this.song.hasBeenMarked) {
-                    var secondsLeft = this.getSecondsLeft()
+                var secondsLeft = this.getSecondsLeft()
+                this.notify('Cron', 'song end in ' + secondsLeft + 's')
+                if (this.isPlaying && !this.isLoading && secondsLeft <= 1) {
+                    this.isLoading = true
+                    this.nextSong()
+                } else if (this.isLoading && secondsLeft > 1) {
+                    this.isLoading = false
+                    this.isPlaying = true
+                }
+                if (!this.isPlaying) return
+                if (!this.progressBarInit) {
+                    this.setProgressBar()
+                }
+                if (!this.song.hasBeenMarked) {
                     if ([34, 21, 13, 8, 5].indexOf(secondsLeft) !== -1) {
                         this.notify('Hey', 'Song end in ' + secondsLeft + ' seconds', 'info', true)
                     }
@@ -549,12 +587,9 @@ window.onload = function () {
 
                 this.updateEndpointAddress()
             },
+            getPercentagePlayed: () => Math.round((Amplitude.getSongPlayedPercentage() || 0) * 100) / 100,
             getSecondsLeft: function () {
-                try {
-                    return Math.round(this.song.duration - this.player.currentTime)
-                } catch (error) {
-                    return 0
-                }
+                return this.getPercentagePlayed() ? Math.round(this.song.duration - (this.song.duration * (this.getPercentagePlayed() / 100))) : 0
             },
             getJson: function (url, success) {
                 var request = new XMLHttpRequest()
@@ -645,7 +680,6 @@ window.onload = function () {
             this.updateDynamicStyles()
             this.notify('info', 'endpoint is ' + this.getEndpointUrl())
             this.metaThemeColor = document.querySelector('meta[name=theme-color]')
-            setInterval(this.cron, 1000)
         }
     })
 }
